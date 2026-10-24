@@ -1,0 +1,209 @@
+@import 'tailwindcss';
+
+/* ─────────────────────────────────────────────────────────────────────────
+   WizzTrain design tokens — warm editorial system.
+
+   A cream ground, white cards, roast-brown ink, terracotta for action and a
+   deep pine green for success. Hairline warm borders rather than shadows, and
+   serif headings in both scripts. Single committed light theme; the token
+   names are unchanged from the previous dark set, so every screen follows
+   this file rather than carrying its own colours.
+   ───────────────────────────────────────────────────────────────────────── */
+@theme {
+  /* Ground and structure */
+  --color-bg: #fffaf0;
+  --color-surface: #ffffff;
+  --color-surface-alt: #fff5e6;
+  --color-border: #e8ddd4;
+  --color-border-dashed: #d8c9bb;
+  --color-input-bg: #ffffff;
+
+  /* Text */
+  --color-text: #2c1810;
+  --color-text-2: #4a3426;
+  --color-text-muted: #6b5344;
+  --color-text-faint: #8b7361;
+  --color-placeholder: #a08a76;
+
+  /* Accent — terracotta, the primary action */
+  --color-accent: #ff6b35;
+  --color-accent-hover: #e2521e;
+  --color-accent-pressed: #ff8a5f;
+  --color-accent-ink: #ffffff;
+  --color-accent-tint: #fff0e8;
+  --color-accent-tint-2: #ffe3d5;
+  --color-accent-tint-3: #ffd6c2;
+  --color-accent-tint-ink: #9c3a12;
+
+  /* Pine green — success. Checked against the accent for red-blind vision:
+     a lighter, more olive green reads as the same colour as the terracotta,
+     so the separation here comes from lightness, not hue alone. */
+  --color-lime: #276749;
+  --color-lime-strong: #2f7a56;
+  --color-lime-mid: #1f5539;
+  --color-lime-deep: #17402b;
+  --color-lime-tint: #e6f0ea;
+  --color-lime-tint-2: #d7e7dd;
+  --color-lime-tint-3: #c5dbce;
+  --color-lime-ink: #1f5539;
+  --color-lime-ink-strong: #17402b;
+
+  /* Status. These four cannot all be told apart by colour alone, so every
+     status in the UI also carries its own word. */
+  --color-warn: #b5790f;
+
+  /* Type — Noto Naskh Arabic for headings, Almarai for body and UI, Karla
+     for numerals so digits stay even in tables and meters. */
+  --font-display: var(--font-naskh), 'Times New Roman', serif;
+  --font-sans: var(--font-almarai), var(--font-karla), system-ui, sans-serif;
+  --font-num: var(--font-karla), system-ui, sans-serif;
+
+  /* Radii — the warm system is squarer than the old pill-heavy one */
+  --radius-pill: 999px;
+  --radius-card: 16px;
+  --radius-card-sm: 14px;
+  --radius-row: 12px;
+
+  /* ── Legacy aliases ───────────────────────────────────────────────────
+     Screens still referencing the older names resolve to the new palette,
+     so nothing renders off-brand. */
+  --color-surface-2: var(--color-surface-alt);
+  --color-surface-3: #fdf3e8;
+  --color-line: var(--color-border);
+  --color-line-soft: #f0e6db;
+  --color-muted: var(--color-text-muted);
+  --color-faint: var(--color-text-faint);
+  --color-blaze: var(--color-accent);
+  --color-blaze-soft: var(--color-accent-pressed);
+  --color-blaze-dim: #ffc9b0;
+  --color-blaze-ghost: var(--color-accent-tint);
+  --color-steel: #3f6f9e;
+  --color-steel-dim: #cddcea;
+  --color-steel-ghost: #eef4f9;
+  --color-good: var(--color-lime);
+  --color-good-ghost: var(--color-lime-tint);
+  --color-warn-ghost: #fdf1dc;
+  --color-bad: #c0392b;
+  --color-bad-ghost: #fbeae7;
+}
+
+/* ── Base ────────────────────────────────────────────────────────────────── */
+html {
+  color-scheme: light;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  margin: 0;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(255, 107, 53, 0.25);
+}
+
+/* Digits line up in every table, meter and stat. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Figures — Karla, so they read evenly beside the serif headings. */
+.stat-num {
+  font-family: var(--font-num);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* Small uppercase Latin label. */
+.micro {
+  font-family: var(--font-num);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* ── Focus — mandatory on every interactive element ──────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ── Form controls ───────────────────────────────────────────────────────── */
+input,
+textarea,
+select,
+button {
+  font: inherit;
+  color: inherit;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* The native picker icon reads fine on the light ground, so it is left
+   unfiltered; only the pointer is worth setting. */
+input[type='date']::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+::placeholder {
+  color: var(--color-placeholder);
+  opacity: 1;
+}
+
+/* ── Scrollbars ──────────────────────────────────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-dashed) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-dashed);
+  border-radius: 999px;
+  border: 3px solid var(--color-bg);
+}
+
+/* ── Motion — short and subtle; no animation library ─────────────────────── */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise {
+  animation: rise 0.2s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

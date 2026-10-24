@@ -1,0 +1,76 @@
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Role } from '@wizzapp/shared';
+import type { AuthenticatedUser, JwtPayload, LoginResponse } from '@wizzapp/shared';
+import { AuthRepository } from './auth.repository';
+import { LoginDto } from './dto/login.dto';
+import { PasswordService } from './password.service';
+
+@Injectable()
+export class AuthService {
+  constructor(
+    private readonly accounts: AuthRepository,
+    private readonly passwords: PasswordService,
+    private readonly jwt: JwtService,
+  ) {}
+
+  async login(dto: LoginDto): Promise<LoginResponse> {
+    const email = dto.email.trim().toLowerCase();
+
+    // Trainer first: there is exactly one, and the two tables share a unique
+    // email space in practice, so at most one branch can match.
+    const trainer = await this.accounts.findTrainerByEmail(email);
+    if (trainer) {
+      return this.issue(trainer, Role.Trainer, dto.password);
+    }
+
+    const client = await this.accounts.findClientByEmail(email);
+    if (client) {
+      return this.issue(client, Role.Client, dto.password);
+    }
+
+    // Run a hash comparison against a dummy value even when no account exists,
+    // so response timing does not reveal which emails are registered.
+    await this.passwords.compare(dto.password, DUMMY_HASH);
+    throw new UnauthorizedException('البريد الإلكتروني أو كلمة المرور غير صحيحة');
+  }
+
+  /** Resolves the JWT payload into the principal attached to the request. */
+  async validatePayload(payload: JwtPayload): Promise<AuthenticatedUser> {
+    const account =
+      payload.role === Role.Trainer
+        ? await this.accounts.findTrainerById(payload.sub)
+        : payload.role === Role.Client
+          ? await this.accounts.findClientById(payload.sub)
+          : null;
+
+    // The account may have been deleted since the token was issued.
+    if (!account) {
+      throw new UnauthorizedException('الحساب لم يعد موجودًا');
+    }
+
+    return { id: account.id, role: payload.role, email: account.email, name: account.name };
+  }
+
+  private async issue(
+    account: { id: string; name: string; email: string; passwordHash: string },
+    role: Role,
+    password: string,
+  ): Promise<LoginResponse> {
+    const matches = await this.passwords.compare(password, account.passwordHash);
+    if (!matches) {
+      throw new UnauthorizedException('البريد الإلكتروني أو كلمة المرور غير صحيحة');
+    }
+
+    const payload: JwtPayload = { sub: account.id, role };
+
+    return {
+      accessToken: await this.jwt.signAsync(payload),
+      role,
+      user: { id: account.id, name: account.name, email: account.email },
+    };
+  }
+}
+
+/** A real bcrypt hash of a value nobody can guess; only used to equalise timing. */
+const DUMMY_HASH = '$2b$12$C6UzMDM.H6dfI/f/IKcEeO6b5T3dGX4z3n0lQm0K4qBqNqQ8oNQZa';

@@ -1,0 +1,846 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   Landing page — warm editorial system.
+
+   Tokens read off the reference demo: a cream ground, a warm second ground
+   for alternating bands, a deep roast brown for ink and for the one dark
+   band, terracotta as the single accent, and hairline warm borders. Card
+   edges are outlined rather than shadowed, and every heading is a serif.
+
+   Scoped to `.page`: the signed-in app keeps its own dark theme, so none of
+   this leaks past the marketing surface.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.page {
+  --cream: #fffaf0;
+  --cream-warm: #fff5e6;
+  --paper: #ffffff;
+  --ink: #2c1810;
+  --ink-soft: #6b5344;
+  --line: #e8ddd4;
+  --primary: #ff6b35;
+  --primary-deep: #e2521e;
+  --secondary: #8b4513;
+
+  --serif: var(--font-playfair), 'Iowan Old Style', Georgia, serif;
+  --serif-ar: var(--font-naskh), 'Times New Roman', serif;
+  --sans: var(--font-karla), system-ui, sans-serif;
+  --sans-ar: var(--font-almarai), var(--font-karla), system-ui, sans-serif;
+
+  --radius: 16px;
+  --radius-sm: 12px;
+
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--sans-ar);
+  font-size: 16px;
+  line-height: 1.9;
+  overflow-x: hidden;
+}
+
+/* :where() drops the type selector's specificity to zero, so this reset
+   cannot outrank the button colours declared below it. */
+.page :where(a) {
+  color: inherit;
+  text-decoration: none;
+}
+
+.wrap {
+  width: min(1160px, 100% - 40px);
+  margin-inline: auto;
+}
+
+/* Headings are serif in both scripts — that pairing is the whole voice. */
+.page h1,
+.page h2,
+.page h3 {
+  margin: 0;
+  font-family: var(--serif-ar);
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+}
+
+.latin {
+  font-family: var(--serif);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Numerals and short Latin runs. The isolate keeps a compound figure such as
+   "3 / 4" or "165 / 180 g" in its written order instead of letting the RTL
+   paragraph flip it, and isolation means the Arabic around it is unaffected.
+   Never put an Arabic word inside this span — it would be reordered. */
+.n {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.hl {
+  color: var(--primary);
+}
+
+/* ── Buttons — 2px ink outline, the reference's signature ───────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-sm);
+  font-family: var(--sans-ar);
+  font-weight: 700;
+  font-size: 15.5px;
+  letter-spacing: 0.02em;
+  padding: 14px 30px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+.btn:hover {
+  transform: translateY(-2px);
+}
+.btnPrimary {
+  background: var(--primary);
+  color: var(--paper);
+}
+.btnPrimary:hover {
+  background: var(--primary-deep);
+}
+.btnOutline {
+  background: transparent;
+  color: var(--ink);
+}
+.btnOutline:hover {
+  background: var(--ink);
+  color: var(--cream);
+}
+.btnCream {
+  background: var(--cream);
+  color: var(--ink);
+  border-color: var(--cream);
+}
+.btnCream:hover {
+  background: var(--paper);
+}
+.btnSm {
+  padding: 9px 20px;
+  font-size: 14.5px;
+}
+.btnBlock {
+  width: 100%;
+}
+
+/* ── Nav — a bordered bar floating on the ground ────────────────────────── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  padding: 16px 0 0;
+  background: linear-gradient(var(--cream) 62%, transparent);
+}
+.navBar {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  background: var(--cream);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  padding: 12px 20px;
+}
+.logo {
+  margin-inline-end: auto;
+  font-family: var(--serif);
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.logo span {
+  color: var(--primary);
+}
+.navAnchor {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  transition: color 0.2s ease;
+}
+.navAnchor:hover {
+  color: var(--primary);
+}
+.navLink {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--ink);
+  transition: color 0.2s ease;
+}
+.navLink:hover {
+  color: var(--primary);
+}
+
+/* ── Hero ───────────────────────────────────────────────────────────────── */
+.hero {
+  padding: 64px 0 86px;
+}
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 52px;
+  align-items: center;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-sm);
+  padding: 7px 15px;
+  font-size: 13.5px;
+  font-weight: 700;
+}
+.tag svg {
+  color: var(--primary);
+}
+
+.heroTitle {
+  font-size: clamp(36px, 5.2vw, 58px);
+  margin-top: 24px;
+  line-height: 1.4;
+}
+.heroSub {
+  margin: 20px 0 0;
+  font-size: 17px;
+  color: var(--ink-soft);
+  max-width: 44ch;
+}
+.heroCta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 32px;
+}
+.heroMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 26px;
+  margin-top: 28px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.heroMeta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.heroMeta svg {
+  color: var(--primary);
+}
+
+/* Offset collage. The reference fills these with photography; with none in
+   the project the tiles keep the same geometry and carry a warm wash and a
+   single glyph instead. */
+.collage {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* Without this the tiles stretch to the row height first, and their
+     aspect-ratio then derives a width far wider than the column. */
+  align-items: start;
+  gap: 16px;
+}
+.tile {
+  width: 100%;
+  min-width: 0;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+  color: var(--secondary);
+  background: linear-gradient(150deg, #f6e3d2, #fff2e2);
+}
+.tile:nth-child(odd) {
+  background: linear-gradient(150deg, #ffe6d5, #fdf3e8);
+}
+.tileTall {
+  aspect-ratio: 3 / 4;
+}
+.collage > :first-child {
+  margin-top: 30px;
+}
+.collage > :nth-child(4) {
+  margin-top: -30px;
+}
+.collageBadge {
+  position: absolute;
+  bottom: -18px;
+  inset-inline-start: 50%;
+  transform: translateX(50%);
+  background: var(--primary);
+  color: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-sm);
+  padding: 12px 22px;
+  text-align: center;
+}
+.collageBadge b {
+  display: block;
+  font-family: var(--sans);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.collageBadge span {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+/* ── Section frame ──────────────────────────────────────────────────────── */
+.section {
+  padding: 86px 0;
+}
+.warm {
+  background: var(--cream-warm);
+}
+.dark {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.secHead {
+  text-align: center;
+  max-width: 62ch;
+  margin: 0 auto 44px;
+}
+.secHead h2 {
+  font-size: clamp(28px, 3.4vw, 38px);
+}
+.secHead p {
+  margin: 14px 0 0;
+  color: var(--ink-soft);
+}
+.dark .secHead p {
+  color: #d9c7b8;
+}
+.dark .secHead h2 {
+  color: var(--cream);
+}
+
+/* The small ornament that opens every section in the reference. */
+.ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  color: var(--primary);
+}
+.ornament::before,
+.ornament::after {
+  content: '';
+  width: 46px;
+  height: 2px;
+  background: currentColor;
+  opacity: 0.45;
+}
+
+/* ── Menu-style list — the programs read as a bill of fare ──────────────── */
+.course {
+  font-family: var(--serif-ar);
+  font-size: 23px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--primary);
+  margin: 0 0 20px;
+}
+.courseNext {
+  margin-top: 44px;
+}
+.menuGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+.item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+.item:hover {
+  border-color: var(--primary);
+  transform: translateY(-3px);
+}
+.thumb {
+  width: 76px;
+  height: 76px;
+  flex: none;
+  border-radius: var(--radius-sm);
+  display: grid;
+  place-items: center;
+  background: linear-gradient(150deg, #ffe0cb, #fdf0e2);
+  color: var(--secondary);
+}
+.itemBody {
+  min-width: 0;
+  flex: 1;
+}
+.itemTop {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.itemName {
+  font-family: var(--serif-ar);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.itemPrice {
+  margin-inline-start: auto;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--primary);
+  white-space: nowrap;
+}
+.itemDesc {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+
+/* ── Story ──────────────────────────────────────────────────────────────── */
+.story {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: center;
+}
+.storyArt {
+  position: relative;
+  padding-bottom: 54px;
+}
+.storyFrame {
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(150deg, #f3ddc9, #fff4e6);
+  color: var(--secondary);
+}
+.quoteCard {
+  position: absolute;
+  bottom: 0;
+  inset-inline-start: 22px;
+  inset-inline-end: 22px;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+}
+.quoteMark {
+  font-family: var(--serif);
+  font-size: 44px;
+  line-height: 0.6;
+  color: var(--primary);
+}
+.quoteCard p {
+  margin: 6px 0 0;
+  font-size: 14.5px;
+  font-style: italic;
+  color: var(--ink-soft);
+  line-height: 1.75;
+}
+.quoteCard cite {
+  display: block;
+  margin-top: 10px;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+}
+.storyText h2 {
+  font-size: clamp(26px, 3.2vw, 36px);
+}
+.storyText p {
+  color: var(--ink-soft);
+  margin: 16px 0 0;
+}
+.storyStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 30px;
+}
+.storyStat {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  padding: 16px;
+  text-align: center;
+}
+.storyStat b {
+  display: block;
+  font-family: var(--sans);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.2;
+}
+.storyStat span {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+/* ── Dark tracking band ─────────────────────────────────────────────────── */
+.demo {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 20px;
+}
+.panel {
+  background: var(--cream);
+  color: var(--ink);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+.panel h3 {
+  font-size: 18px;
+  margin-bottom: 14px;
+}
+.chartWrap {
+  overflow-x: auto;
+}
+.chart {
+  width: 100%;
+  min-width: 420px;
+  height: auto;
+  direction: ltr;
+}
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 18px;
+}
+.kpi {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 13px;
+}
+.kpi span {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.kpi b {
+  display: block;
+  /* The value is an LTR isolate, so its own start edge would be the left;
+     pull it back to the card's right edge. */
+  text-align: right;
+  font-family: var(--sans);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.kpi em {
+  font-style: normal;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--secondary);
+}
+
+.meters {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.meterLabel {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.meterLabel .v {
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+.bar {
+  height: 9px;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;
+}
+.bar i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--primary);
+}
+.barHit {
+  background: var(--secondary) !important;
+}
+.hitTag {
+  color: var(--secondary);
+}
+.note {
+  margin: 18px 0 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+
+/* ── Testimonials ───────────────────────────────────────────────────────── */
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.voice {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+.voice:hover {
+  border-color: var(--primary);
+  transform: translateY(-3px);
+}
+.voice p {
+  margin: 0;
+  font-size: 15px;
+  color: var(--ink-soft);
+  font-style: italic;
+  line-height: 1.85;
+}
+.voiceWho {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: auto;
+}
+.voiceFace {
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--cream-warm);
+  border: 2px solid var(--ink);
+  font-family: var(--serif-ar);
+  font-size: 15px;
+  font-weight: 700;
+}
+.voiceName {
+  font-family: var(--serif-ar);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.voiceRole {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+/* ── Plans ──────────────────────────────────────────────────────────────── */
+.plan {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.planPicked {
+  border: 2px solid var(--ink);
+  background: var(--cream);
+}
+.planName {
+  font-family: var(--serif);
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+.planNote {
+  margin: -10px 0 0;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.planPrice {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 16px;
+}
+.planPrice b {
+  font-family: var(--sans);
+  font-size: 46px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--primary);
+}
+.planPrice span {
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.planList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.planList li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 14.5px;
+  color: var(--ink-soft);
+}
+.planList svg {
+  flex: none;
+  margin-top: 6px;
+  color: var(--primary);
+}
+.plan .btn {
+  margin-top: auto;
+}
+
+/* ── Final CTA + footer ─────────────────────────────────────────────────── */
+.final {
+  text-align: center;
+  padding: 76px 30px;
+}
+.final h2 {
+  font-size: clamp(28px, 4vw, 42px);
+  color: var(--cream);
+}
+.final p {
+  margin: 16px auto 0;
+  max-width: 52ch;
+  color: #d9c7b8;
+}
+.final .btn {
+  margin-top: 28px;
+}
+
+.footer {
+  border-top: 1px solid var(--line);
+  padding: 30px 0;
+}
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+/* ── Motion ─────────────────────────────────────────────────────────────── */
+/* The resting state is rendered by React itself, so there is no attribute
+   for the browser and the server to disagree about. A <noscript> rule in the
+   markup reveals everything when scripting is off. */
+.page [data-reveal='hidden'] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.6s cubic-bezier(0.2, 0.7, 0.3, 1),
+    transform 0.6s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+.page [data-reveal='shown'] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page [data-reveal='hidden'] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .btn:hover,
+  .item:hover,
+  .voice:hover {
+    transform: none;
+  }
+}
+
+/* ── Responsive: 1440 / 1024 / 768 / 375 ────────────────────────────────── */
+@media (max-width: 1024px) {
+  .heroGrid,
+  .story {
+    grid-template-columns: 1fr;
+    gap: 44px;
+  }
+  .grid3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .demo {
+    grid-template-columns: 1fr;
+  }
+  /* Stacked, the collage would otherwise run the full column width and
+     tower over the copy it is meant to accompany. */
+  .collage {
+    max-width: 520px;
+    margin-inline: auto;
+  }
+  .navAnchor {
+    display: none;
+  }
+}
+@media (max-width: 768px) {
+  .menuGrid,
+  .grid3 {
+    grid-template-columns: 1fr;
+  }
+  .section {
+    padding: 62px 0;
+  }
+  .hero {
+    padding: 44px 0 70px;
+  }
+}
+@media (max-width: 560px) {
+  .kpis,
+  .storyStats {
+    grid-template-columns: 1fr;
+  }
+  .collage > :first-child,
+  .collage > :nth-child(4) {
+    margin-top: 0;
+  }
+  .final {
+    padding: 52px 20px;
+  }
+}

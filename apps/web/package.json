@@ -1,0 +1,30 @@
+{
+  "name": "@wizzapp/web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Next.js frontend \u2014 Trainer + Client, Arabic RTL",
+  "scripts": {
+    "dev": "next dev -p ${WEB_PORT:-3000}",
+    "build": "next build",
+    "start": "next start -p ${WEB_PORT:-3000}",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@wizzapp/shared": "0.1.0",
+    "next": "^16.3.4",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.13",
+    "@types/node": "^20.17.10",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.6.3",
+    "vitest": "^4.1.11"
+  }
+}

@@ -1,0 +1,214 @@
+// Personal Training Management Platform — MVP v0
+// Data model per TECH_SPEC_EN.md §8, with referential actions and indexes added.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Trainer {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  clients   Client[]
+  templates ProgramTemplate[]
+
+  @@map("trainers")
+}
+
+/// A reusable workout plan the trainer keeps on the shelf.
+///
+/// Applying one to a client **copies** it into an ordinary WorkoutProgram
+/// rather than linking, so editing a client's programme never disturbs the
+/// template, and revising the template never rewrites plans already in use.
+model ProgramTemplate {
+  id        String   @id @default(uuid())
+  trainerId String
+  trainer   Trainer  @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  title     String
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  days TemplateDay[]
+
+  @@index([trainerId])
+  @@map("program_templates")
+}
+
+model TemplateDay {
+  id         String          @id @default(uuid())
+  templateId String
+  template   ProgramTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  dayLabel   String
+  orderIndex Int
+
+  exercises TemplateExercise[]
+
+  @@index([templateId, orderIndex])
+  @@map("template_days")
+}
+
+model TemplateExercise {
+  id            String      @id @default(uuid())
+  templateDayId String
+  templateDay   TemplateDay @relation(fields: [templateDayId], references: [id], onDelete: Cascade)
+  name          String
+  sets          Int
+  reps          String
+  restInterval  String?
+  notes         String?
+  videoUrl      String?
+  videoFile     String?
+  orderIndex    Int         @default(0)
+
+  @@index([templateDayId, orderIndex])
+  @@map("template_exercises")
+}
+
+model Client {
+  id           String    @id @default(uuid())
+  trainerId    String
+  trainer      Trainer   @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  name         String
+  email        String    @unique
+  passwordHash String
+  heightCm     Float?
+  age          Int?
+  startDate    DateTime?
+  phone        String?
+  /// Weight at programme start, so progress reads start → current → goal.
+  startWeightKg Float?
+  goalWeightKg Float?
+  goalNote     String?
+  createdAt    DateTime  @default(now())
+
+  workoutPrograms WorkoutProgram[]
+  nutritionPlans  NutritionPlan[]
+  dailyLogs       DailyLog[]
+
+  @@index([trainerId])
+  @@map("clients")
+}
+
+model WorkoutProgram {
+  id        String   @id @default(uuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  title     String
+  startDate DateTime
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  days WorkoutDay[]
+
+  @@index([clientId, isActive])
+  @@map("workout_programs")
+}
+
+model WorkoutDay {
+  id         String         @id @default(uuid())
+  programId  String
+  program    WorkoutProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+  dayLabel   String
+  orderIndex Int
+
+  exercises ExerciseItem[]
+
+  @@index([programId, orderIndex])
+  @@map("workout_days")
+}
+
+model ExerciseItem {
+  id           String     @id @default(uuid())
+  workoutDayId String
+  workoutDay   WorkoutDay @relation(fields: [workoutDayId], references: [id], onDelete: Cascade)
+  name         String
+  sets         Int
+  reps         String
+  restInterval String?
+  notes        String?
+  /// A link the trainer pasted (YouTube, Instagram, Drive…).
+  videoUrl     String?
+  /// Filename of a video uploaded to this server. Mutually exclusive with
+  /// videoUrl — setting one clears the other, so there is never a question
+  /// of which the client should see.
+  videoFile    String?
+  orderIndex   Int        @default(0)
+
+  logs ExerciseLog[]
+
+  @@index([workoutDayId, orderIndex])
+  @@map("exercise_items")
+}
+
+model ExerciseLog {
+  id             String       @id @default(uuid())
+  exerciseItemId String
+  exerciseItem   ExerciseItem @relation(fields: [exerciseItemId], references: [id], onDelete: Cascade)
+  completedAt    DateTime     @default(now())
+  actualWeightKg Float?
+  actualReps     String?
+
+  @@index([exerciseItemId, completedAt])
+  @@map("exercise_logs")
+}
+
+model NutritionPlan {
+  id            String   @id @default(uuid())
+  clientId      String
+  client        Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  dailyCalories Int
+  proteinG      Int
+  carbsG        Int
+  fatG          Int
+  fiberMinG     Int?
+  waterMinL     Float?
+  stepsMin      Int?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  meals Meal[]
+
+  @@index([clientId, isActive])
+  @@map("nutrition_plans")
+}
+
+model Meal {
+  id              String        @id @default(uuid())
+  nutritionPlanId String
+  nutritionPlan   NutritionPlan @relation(fields: [nutritionPlanId], references: [id], onDelete: Cascade)
+  name            String
+  description     String
+
+  @@index([nutritionPlanId])
+  @@map("meals")
+}
+
+model DailyLog {
+  id             String   @id @default(uuid())
+  clientId       String
+  client         Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  logDate        DateTime @db.Date
+  weightKg       Float?
+  caloriesActual Int?
+  carbsGActual   Int?
+  proteinGActual Int?
+  fatGActual     Int?
+  fiberGActual   Int?
+  waterLActual   Float?
+  sleepHours     Float?
+  stepsActual    Int?
+  notes          String?
+
+  @@unique([clientId, logDate])
+  @@index([clientId, logDate])
+  @@map("daily_logs")
+}

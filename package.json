@@ -1,0 +1,30 @@
+{
+  "name": "wizzapp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Personal Training Management Platform \u2014 MVP v0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace @wizzapp/shared && npm run build --workspace @wizzapp/api && npm run build --workspace @wizzapp/web",
+    "dev:api": "npm run start:dev --workspace @wizzapp/api",
+    "prisma:generate": "npm run prisma:generate --workspace @wizzapp/api",
+    "prisma:migrate": "npm run prisma:migrate --workspace @wizzapp/api",
+    "seed": "npm run seed --workspace @wizzapp/api",
+    "test": "npm run test --workspace @wizzapp/api && npm run test --workspace @wizzapp/web",
+    "test:e2e": "npm run test:e2e --workspace @wizzapp/api",
+    "lint": "npm run lint --workspace @wizzapp/api",
+    "dev:web": "npm run dev --workspace @wizzapp/web",
+    "typecheck": "npm run typecheck --workspace @wizzapp/web",
+    "test:api": "npm run test --workspace @wizzapp/api",
+    "test:web": "npm run test --workspace @wizzapp/web"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "overrides": {
+    "multer": "^2.3.0"
+  }
+}
