@@ -32,7 +32,7 @@ export function ClientShell({ children }: { children: ReactNode }) {
           className="pointer-events-none absolute -top-[120px] size-[320px] rounded-full"
           style={{
             insetInlineEnd: '-100px',
-            background: 'radial-gradient(circle, rgba(255,90,31,.35), rgba(255,90,31,0) 70%)',
+            background: 'radial-gradient(circle, rgba(255,107,53,.22), rgba(255,107,53,0) 70%)',
           }}
         />
 

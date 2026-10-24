@@ -10,7 +10,7 @@ export function Glow() {
         className="absolute -top-[140px] h-[460px] w-[460px] rounded-full"
         style={{
           insetInlineEnd: '-120px',
-          background: 'radial-gradient(circle, rgba(255,90,31,.3), rgba(255,90,31,0) 70%)',
+          background: 'radial-gradient(circle, rgba(255,107,53,.22), rgba(255,107,53,0) 70%)',
         }}
       />
       <div

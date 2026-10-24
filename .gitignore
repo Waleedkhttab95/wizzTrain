@@ -20,3 +20,6 @@ backups/
 
 # Uploaded exercise videos (backed up separately by scripts/backup.sh)
 uploads/
+
+# TypeScript incremental build state — machine-local, not source.
+*.tsbuildinfo

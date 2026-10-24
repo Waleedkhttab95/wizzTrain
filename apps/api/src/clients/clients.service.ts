@@ -52,6 +52,17 @@ export class ClientsService {
     return { ...toClientSummary(row), ...emptyRelations(row) };
   }
 
+  /**
+   * Issues a client a new password. Trainer-only, and scoped the same way as
+   * every other client route, so a trainer cannot reset an account they do
+   * not own. The client's existing tokens keep working until they expire —
+   * the JWT carries no password state — so this locks nobody out mid-session.
+   */
+  async resetPassword(trainerId: string, id: string, password: string): Promise<void> {
+    await this.getOwnedOrThrow(id, trainerId);
+    await this.clients.update(id, { passwordHash: await this.passwords.hash(password) });
+  }
+
   async update(trainerId: string, id: string, dto: UpdateClientDto): Promise<ClientProfile> {
     await this.getOwnedOrThrow(id, trainerId);
 

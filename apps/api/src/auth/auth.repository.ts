@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Role } from '@wizzapp/shared';
 import { PrismaService } from '../prisma/prisma.service';
 
 /** The identity fields the auth flow needs — nothing more. */
@@ -46,5 +47,20 @@ export class AuthRepository {
 
   findClientById(id: string): Promise<PublicAccount | null> {
     return this.prisma.client.findUnique({ where: { id }, select: publicSelect });
+  }
+
+  /** Like the two lookups above, but carrying the hash a password change needs. */
+  findAccountById(role: Role, id: string): Promise<AuthAccount | null> {
+    return role === Role.Trainer
+      ? this.prisma.trainer.findUnique({ where: { id }, select: accountSelect })
+      : this.prisma.client.findUnique({ where: { id }, select: accountSelect });
+  }
+
+  async updatePassword(role: Role, id: string, passwordHash: string): Promise<void> {
+    if (role === Role.Trainer) {
+      await this.prisma.trainer.update({ where: { id }, data: { passwordHash } });
+      return;
+    }
+    await this.prisma.client.update({ where: { id }, data: { passwordHash } });
   }
 }

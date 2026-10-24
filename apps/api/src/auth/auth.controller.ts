@@ -4,6 +4,7 @@ import type { AuthenticatedUser, LoginResponse } from '@wizzapp/shared';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { Public } from '../common/decorators/public.decorator';
 import { AuthService } from './auth.service';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { LoginDto } from './dto/login.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiStandardErrors } from '../common/decorators/api-errors.decorator';
@@ -35,6 +36,26 @@ export class AuthController {
   @Post('login')
   login(@Body() dto: LoginDto): Promise<LoginResponse> {
     return this.authService.login(dto);
+  }
+
+  /**
+   * Rate-limited like login: both endpoints take a password and tell the
+   * caller whether it was right, so both are worth guessing against.
+   */
+  @ApiOperation({
+    summary: 'Change your own password',
+    description:
+      'Works for either role. Requires the current password as well as the bearer token, and returns no body.',
+  })
+  @ApiBearerAuth('bearer')
+  @Throttle({ default: { limit: LOGIN_RATE_LIMIT, ttl: LOGIN_RATE_TTL_MS } })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post('password')
+  changePassword(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: ChangePasswordDto,
+  ): Promise<void> {
+    return this.authService.changePassword(user, dto);
   }
 
   /** Lets the web app restore a session on reload without decoding the JWT itself. */

@@ -11,6 +11,7 @@ import { GhostPill, PillField, PillTextArea, PrimaryPill } from '@/components/ui
 import { useToast } from '@/components/ui/Toast';
 import { ApiError, api } from '@/lib/api';
 import { todayIso } from '@/lib/format';
+import { suggestPassword } from '@/lib/password';
 
 const STEP_LABELS = ['بيانات أساسية', 'بيانات جسدية', 'الهدف'];
 
@@ -41,17 +42,6 @@ const BLANK: Form = {
 };
 
 type Errors = Partial<Record<keyof Form, string>>;
-
-/**
- * A readable initial password the trainer can dictate over the phone — no
- * ambiguous characters, and it clears the API's 8-character minimum.
- */
-function suggestPassword(): string {
-  const words = ['Squat', 'Bench', 'Press', 'Lunge', 'Plank', 'Rowing', 'Sprint'];
-  const bytes = new Uint32Array(2);
-  crypto.getRandomValues(bytes);
-  return `${words[bytes[0] % words.length]}${100 + (bytes[1] % 900)}`;
-}
 
 export default function AddClientPage() {
   const router = useRouter();

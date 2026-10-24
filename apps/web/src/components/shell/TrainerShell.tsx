@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
+import { ChangePasswordDialog } from '@/components/ui/ChangePasswordDialog';
 import { cn } from '@/components/ui/cn';
 import { useAuth } from '@/lib/auth';
 import { initials } from '@/lib/format';
@@ -35,6 +36,7 @@ const NAV: NavItem[] = [
 
 export function TrainerShell({ children }: { children: ReactNode }) {
   const { user, logout } = useAuth();
+  const [passwordOpen, setPasswordOpen] = useState(false);
   const pathname = usePathname();
 
   const isActive = (item: NavItem) =>
@@ -62,7 +64,7 @@ export function TrainerShell({ children }: { children: ReactNode }) {
                   'font-[family-name:var(--font-display)] text-[16px] font-bold',
                   'transition-colors duration-150',
                   active
-                    ? 'bg-[rgba(255,90,31,.16)] text-accent-pressed'
+                    ? 'bg-accent-tint text-accent-pressed'
                     : 'text-text hover:bg-[rgba(198,113,57,.14)]',
                 )}
               >
@@ -86,7 +88,7 @@ export function TrainerShell({ children }: { children: ReactNode }) {
           </p>
           <Link
             href="/trainer"
-            className="mt-1 self-start rounded-full border border-[rgba(255,255,255,.16)] px-4 py-2 text-[13.5px] font-semibold transition-colors hover:bg-[rgba(255,255,255,.07)]"
+            className="mt-1 self-start rounded-full border border-line px-4 py-2 text-[13.5px] font-semibold transition-colors hover:bg-surface-alt"
           >
             شوفهم
           </Link>
@@ -100,6 +102,12 @@ export function TrainerShell({ children }: { children: ReactNode }) {
             <p className="truncate text-[14px] font-semibold">{user?.name}</p>
             <p className="text-[12px] text-text-faint">مدرب</p>
           </div>
+          <button
+            onClick={() => setPasswordOpen(true)}
+            className="p-1.5 text-[13px] font-semibold text-text-muted transition-colors hover:text-accent-pressed"
+          >
+            كلمة المرور
+          </button>
           <button
             onClick={logout}
             title="خروج"
@@ -117,7 +125,7 @@ export function TrainerShell({ children }: { children: ReactNode }) {
           <Brand size={32} />
           <button
             onClick={logout}
-            className="rounded-full border border-[rgba(255,255,255,.16)] px-3.5 py-1.5 text-[13px] font-semibold text-text-muted"
+            className="rounded-full border border-line px-3.5 py-1.5 text-[13px] font-semibold text-text-muted"
           >
             خروج
           </button>
@@ -131,7 +139,7 @@ export function TrainerShell({ children }: { children: ReactNode }) {
               className={cn(
                 'flex shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-[13.5px] font-semibold transition-colors',
                 isActive(item)
-                  ? 'bg-[rgba(255,90,31,.16)] text-accent-pressed'
+                  ? 'bg-accent-tint text-accent-pressed'
                   : 'text-text-muted',
               )}
             >
@@ -145,6 +153,7 @@ export function TrainerShell({ children }: { children: ReactNode }) {
           {children}
         </main>
       </div>
+      <ChangePasswordDialog open={passwordOpen} onClose={() => setPasswordOpen(false)} />
     </div>
   );
 }

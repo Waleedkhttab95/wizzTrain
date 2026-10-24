@@ -1,8 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Role } from '@wizzapp/shared';
 import type { AuthenticatedUser, JwtPayload, LoginResponse } from '@wizzapp/shared';
 import { AuthRepository } from './auth.repository';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { LoginDto } from './dto/login.dto';
 import { PasswordService } from './password.service';
 
@@ -33,6 +34,36 @@ export class AuthService {
     // so response timing does not reveal which emails are registered.
     await this.passwords.compare(dto.password, DUMMY_HASH);
     throw new UnauthorizedException('البريد الإلكتروني أو كلمة المرور غير صحيحة');
+  }
+
+  /**
+   * Changes the caller's own password. Proving the current one matters even
+   * though the caller already holds a valid token: a token left behind on a
+   * shared device should not be enough to lock its owner out of the account.
+   */
+  async changePassword(user: AuthenticatedUser, dto: ChangePasswordDto): Promise<void> {
+    const account = await this.accounts.findAccountById(user.role, user.id);
+    if (!account) {
+      throw new UnauthorizedException('الحساب لم يعد موجودًا');
+    }
+
+    // 400, not 401: the caller's token is perfectly valid — one field of the
+    // body is wrong. The web client treats any 401 as an expired session and
+    // signs the user out, so a mistyped password must not look like one.
+    const matches = await this.passwords.compare(dto.currentPassword, account.passwordHash);
+    if (!matches) {
+      throw new BadRequestException('كلمة المرور الحالية غير صحيحة');
+    }
+
+    if (dto.currentPassword === dto.newPassword) {
+      throw new BadRequestException('كلمة المرور الجديدة مطابقة للحالية');
+    }
+
+    await this.accounts.updatePassword(
+      user.role,
+      user.id,
+      await this.passwords.hash(dto.newPassword),
+    );
   }
 
   /** Resolves the JWT payload into the principal attached to the request. */

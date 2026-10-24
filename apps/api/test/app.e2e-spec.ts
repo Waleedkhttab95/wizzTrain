@@ -424,6 +424,110 @@ describe('Personal Training Platform (e2e)', () => {
         .expect(400));
   });
 
+
+  describe('F9 — password changes', () => {
+    // Left as the trainer's password at the end of this block, so the order
+    // of assertions below matters.
+    const ROTATED = 'RotatedPass456';
+    const CLIENT_REPLACEMENT = 'Replacement789';
+
+    // 400, so the web client does not mistake it for an expired session.
+    it('refuses a change when the current password is wrong', async () => {
+      await http
+        .post(`${API}/auth/password`)
+        .set('Authorization', `Bearer ${trainerToken}`)
+        .send({ currentPassword: 'not-the-password', newPassword: ROTATED })
+        .expect(400);
+    });
+
+    it('refuses a new password identical to the current one', async () => {
+      await http
+        .post(`${API}/auth/password`)
+        .set('Authorization', `Bearer ${trainerToken}`)
+        .send({ currentPassword: TRAINER_PASSWORD, newPassword: TRAINER_PASSWORD })
+        .expect(400);
+    });
+
+    it('refuses a new password under eight characters', async () => {
+      await http
+        .post(`${API}/auth/password`)
+        .set('Authorization', `Bearer ${trainerToken}`)
+        .send({ currentPassword: TRAINER_PASSWORD, newPassword: 'short' })
+        .expect(400);
+    });
+
+    it('rejects an unauthenticated caller', async () => {
+      await http
+        .post(`${API}/auth/password`)
+        .send({ currentPassword: TRAINER_PASSWORD, newPassword: ROTATED })
+        .expect(401);
+    });
+
+    it('changes the trainer password, and only the new one then works', async () => {
+      await http
+        .post(`${API}/auth/password`)
+        .set('Authorization', `Bearer ${trainerToken}`)
+        .send({ currentPassword: TRAINER_PASSWORD, newPassword: ROTATED })
+        .expect(204);
+
+      const trainer = await prisma.trainer.findUniqueOrThrow({ where: { id: trainerId } });
+
+      await http
+        .post(`${API}/auth/login`)
+        .send({ email: trainer.email, password: TRAINER_PASSWORD })
+        .expect(401);
+
+      const { body } = await http
+        .post(`${API}/auth/login`)
+        .send({ email: trainer.email, password: ROTATED })
+        .expect(200);
+
+      // Later blocks keep using the trainer, so carry the fresh token forward.
+      trainerToken = body.accessToken;
+    });
+
+    it('lets the trainer issue a client a replacement password', async () => {
+      await http
+        .post(`${API}/clients/${clientId}/password`)
+        .set('Authorization', `Bearer ${trainerToken}`)
+        .send({ password: CLIENT_REPLACEMENT })
+        .expect(204);
+
+      await http
+        .post(`${API}/auth/login`)
+        .send({ email: clientEmail, password: CLIENT_PASSWORD })
+        .expect(401);
+
+      const { body } = await http
+        .post(`${API}/auth/login`)
+        .send({ email: clientEmail, password: CLIENT_REPLACEMENT })
+        .expect(200);
+
+      clientToken = body.accessToken;
+    });
+
+    it('does not let a client reset anyone\'s password', async () => {
+      await http
+        .post(`${API}/clients/${clientId}/password`)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .send({ password: 'ClientChosen123' })
+        .expect(403);
+    });
+
+    it('lets the client change their own password', async () => {
+      await http
+        .post(`${API}/auth/password`)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .send({ currentPassword: CLIENT_REPLACEMENT, newPassword: 'ClientChosen123' })
+        .expect(204);
+
+      await http
+        .post(`${API}/auth/login`)
+        .send({ email: clientEmail, password: 'ClientChosen123' })
+        .expect(200);
+    });
+  });
+
   describe('role and ownership enforcement', () => {
     let otherClientToken: string;
 

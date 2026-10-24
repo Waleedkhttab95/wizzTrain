@@ -8,11 +8,13 @@ export const ApiRoutes = {
   auth: {
     login: '/auth/login',
     me: '/auth/me',
+    password: '/auth/password',
   },
   clients: {
     list: '/clients',
     create: '/clients',
     byId: (id: string) => `/clients/${id}`,
+    password: (id: string) => `/clients/${id}/password`,
     programs: (id: string) => `/clients/${id}/programs`,
     nutritionPlan: (id: string) => `/clients/${id}/nutrition-plan`,
     dailyLogs: (id: string) => `/clients/${id}/daily-logs`,

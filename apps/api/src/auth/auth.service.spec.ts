@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import { Role } from '@wizzapp/shared';
@@ -32,6 +32,8 @@ describe('AuthService', () => {
       findClientByEmail: jest.fn().mockResolvedValue(null),
       findTrainerById: jest.fn().mockResolvedValue(null),
       findClientById: jest.fn().mockResolvedValue(null),
+      findAccountById: jest.fn().mockResolvedValue(null),
+      updatePassword: jest.fn().mockResolvedValue(undefined),
     } as unknown as jest.Mocked<AuthRepository>;
 
     passwords = {
@@ -153,4 +155,89 @@ describe('AuthService', () => {
       ).rejects.toBeInstanceOf(UnauthorizedException);
     });
   });
+
+  describe('changePassword', () => {
+    const CALLER = {
+      id: TRAINER.id,
+      role: Role.Trainer,
+      email: TRAINER.email,
+      name: TRAINER.name,
+    };
+
+    it('stores a hash of the new password once the current one checks out', async () => {
+      accounts.findAccountById.mockResolvedValue(TRAINER);
+      passwords.compare.mockResolvedValue(true);
+      passwords.hash.mockResolvedValue('hashed-new');
+
+      await service.changePassword(CALLER, {
+        currentPassword: 'old-password',
+        newPassword: 'new-password',
+      });
+
+      expect(passwords.compare).toHaveBeenCalledWith('old-password', TRAINER.passwordHash);
+      expect(accounts.updatePassword).toHaveBeenCalledWith(
+        Role.Trainer,
+        TRAINER.id,
+        'hashed-new',
+      );
+    });
+
+    // 400 rather than 401 on purpose: the web client signs the user out on
+    // any 401, and mistyping your own password should not do that.
+    it('rejects a wrong current password and writes nothing', async () => {
+      accounts.findAccountById.mockResolvedValue(TRAINER);
+      passwords.compare.mockResolvedValue(false);
+
+      await expect(
+        service.changePassword(CALLER, {
+          currentPassword: 'wrong',
+          newPassword: 'new-password',
+        }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+
+      expect(accounts.updatePassword).not.toHaveBeenCalled();
+    });
+
+    it('refuses a new password identical to the current one', async () => {
+      accounts.findAccountById.mockResolvedValue(TRAINER);
+      passwords.compare.mockResolvedValue(true);
+
+      await expect(
+        service.changePassword(CALLER, {
+          currentPassword: 'same-password',
+          newPassword: 'same-password',
+        }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+
+      expect(accounts.updatePassword).not.toHaveBeenCalled();
+    });
+
+    it('rejects a caller whose account has since been deleted', async () => {
+      accounts.findAccountById.mockResolvedValue(null);
+
+      await expect(
+        service.changePassword(CALLER, {
+          currentPassword: 'old-password',
+          newPassword: 'new-password',
+        }),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
+
+      expect(passwords.compare).not.toHaveBeenCalled();
+    });
+
+    it('routes a client caller to the client table', async () => {
+      accounts.findAccountById.mockResolvedValue(CLIENT);
+      passwords.compare.mockResolvedValue(true);
+      passwords.hash.mockResolvedValue('hashed-new');
+
+      await service.changePassword(
+        { id: CLIENT.id, role: Role.Client, email: CLIENT.email, name: CLIENT.name },
+        { currentPassword: 'old-password', newPassword: 'new-password' },
+      );
+
+      expect(accounts.findAccountById).toHaveBeenCalledWith(Role.Client, CLIENT.id);
+      expect(accounts.updatePassword).toHaveBeenCalledWith(Role.Client, CLIENT.id, 'hashed-new');
+    });
+  });
+
 });

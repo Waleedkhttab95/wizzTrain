@@ -7,7 +7,7 @@ import type {
   WorkoutProgramView,
 } from '@wizzapp/shared';
 import Link from 'next/link';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { ErrorNote, Loading } from '@/components/ui/Feedback';
 import { Num } from '@/components/ui/Num';
 import { ApiError, api } from '@/lib/api';
@@ -16,6 +16,7 @@ import { computeStreak, logFor } from '@/lib/streak';
 import { useApi } from '@/lib/useApi';
 import { suggestedDay } from '@/lib/workoutDay';
 import { palette } from '@/lib/palette';
+import { ChangePasswordDialog } from '@/components/ui/ChangePasswordDialog';
 
 export default function HomePage() {
   const today = todayIso();
@@ -57,6 +58,8 @@ export default function HomePage() {
     .filter((log) => log.weightKg !== null)
     .sort((a, b) => b.logDate.localeCompare(a.logDate));
   const latestWeight = weighIns[0]?.weightKg ?? null;
+  const [passwordOpen, setPasswordOpen] = useState(false);
+
   const weightDelta =
     weighIns.length >= 2 ? (weighIns[0].weightKg as number) - (weighIns[1].weightKg as number) : null;
 
@@ -72,10 +75,18 @@ export default function HomePage() {
             {greeting()} {firstName(me.data?.name ?? '')}
           </h1>
         </div>
-        <div className="grid size-[46px] flex-none place-items-center rounded-full bg-lime text-[15px] font-bold text-surface">
+        <button
+          type="button"
+          onClick={() => setPasswordOpen(true)}
+          title="تغيير كلمة المرور"
+          aria-label="تغيير كلمة المرور"
+          className="grid size-[46px] flex-none place-items-center rounded-full bg-lime text-[15px] font-bold text-surface transition-opacity hover:opacity-85"
+        >
           {initials(me.data?.name ?? '')}
-        </div>
+        </button>
       </header>
+
+      <ChangePasswordDialog open={passwordOpen} onClose={() => setPasswordOpen(false)} />
 
       {/* The day's single most important action. */}
       {streak.loggedToday ? (

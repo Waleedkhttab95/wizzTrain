@@ -1,6 +1,10 @@
+'use client';
+
 import type { ClientProfile } from '@wizzapp/shared';
+import { useState } from 'react';
 import { Num } from '@/components/ui/Num';
 import { decimal, initials, longDate } from '@/lib/format';
+import { ResetClientPasswordDialog } from './ResetClientPasswordDialog';
 import { avatarColor, lastLogLabel } from './clientStatus';
 
 /**
@@ -11,6 +15,7 @@ export function ProfileHero({ client }: { client: ClientProfile }) {
   // Their latest logged weight, falling back to what the trainer recorded at
   // sign-up so the tile is never blank for a client who hasn't logged yet.
   const current = client.latestWeightKg ?? client.startWeightKg;
+  const [resetOpen, setResetOpen] = useState(false);
 
   return (
     <header className="flex flex-wrap items-center gap-[22px] rounded-[16px] bg-surface-alt p-[26px]">
@@ -30,6 +35,13 @@ export function ProfileHero({ client }: { client: ClientProfile }) {
           {' · '}
           آخر تسجيل {lastLogLabel(client.lastLogDate)}
         </p>
+        <button
+          type="button"
+          onClick={() => setResetOpen(true)}
+          className="mt-1.5 text-[13px] font-semibold text-text-muted underline-offset-4 transition-colors hover:text-accent-hover hover:underline"
+        >
+          تعيين كلمة مرور جديدة
+        </button>
       </div>
 
       <div className="flex flex-wrap gap-3">
@@ -37,6 +49,13 @@ export function ProfileHero({ client }: { client: ClientProfile }) {
         <Tile label="العمر" value={client.age ? `${client.age} سنة` : '—'} />
         <WeightTile current={current} goal={client.goalWeightKg} />
       </div>
+
+      <ResetClientPasswordDialog
+        open={resetOpen}
+        clientId={client.id}
+        clientName={client.name}
+        onClose={() => setResetOpen(false)}
+      />
     </header>
   );
 }
