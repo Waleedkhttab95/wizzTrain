@@ -15,6 +15,7 @@ export const ApiRoutes = {
     create: '/clients',
     byId: (id: string) => `/clients/${id}`,
     password: (id: string) => `/clients/${id}/password`,
+    archive: (id: string) => `/clients/${id}/archive`,
     programs: (id: string) => `/clients/${id}/programs`,
     nutritionPlan: (id: string) => `/clients/${id}/nutrition-plan`,
     dailyLogs: (id: string) => `/clients/${id}/daily-logs`,

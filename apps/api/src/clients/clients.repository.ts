@@ -19,6 +19,7 @@ export const clientSummarySelect = {
   startWeightKg: true,
   startDate: true,
   createdAt: true,
+  archivedAt: true,
   /**
    * Enough recent logs to build the roster's week strip and "last logged"
    * line. Ten covers the seven-day window with room to spare, and Prisma
@@ -77,9 +78,14 @@ export type ClientProfileWithRelationsRow = Prisma.ClientGetPayload<{
 export class ClientsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAllForTrainer(trainerId: string): Promise<ClientSummaryRow[]> {
+  /**
+   * The roster. Archived clients are a separate list rather than a flag the
+   * caller filters out, so the dashboard counts and the adherence average
+   * never quietly include someone the trainer has stopped coaching.
+   */
+  findAllForTrainer(trainerId: string, archived = false): Promise<ClientSummaryRow[]> {
     return this.prisma.client.findMany({
-      where: { trainerId },
+      where: { trainerId, archivedAt: archived ? { not: null } : null },
       select: clientSummarySelect,
       orderBy: { createdAt: 'desc' },
     });

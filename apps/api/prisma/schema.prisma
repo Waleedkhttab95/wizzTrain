@@ -89,12 +89,17 @@ model Client {
   goalWeightKg Float?
   goalNote     String?
   createdAt    DateTime  @default(now())
+  /// Set when the trainer stops working with them. Archived clients keep all
+  /// their history but leave the roster, drop out of the adherence average,
+  /// and can no longer sign in. Clearing it restores everything.
+  archivedAt   DateTime?
 
   workoutPrograms WorkoutProgram[]
   nutritionPlans  NutritionPlan[]
   dailyLogs       DailyLog[]
 
   @@index([trainerId])
+  @@index([trainerId, archivedAt])
   @@map("clients")
 }
 

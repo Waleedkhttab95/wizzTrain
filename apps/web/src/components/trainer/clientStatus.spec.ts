@@ -18,6 +18,7 @@ function client(over: Partial<ClientSummary> = {}): ClientSummary {
     latestWeightKg: null,
     weekStrip: [false, false, false, false, false, false, false],
     daysLoggedThisWeek: 0,
+    archivedAt: null,
     status: 'behind',
     ...over,
   };

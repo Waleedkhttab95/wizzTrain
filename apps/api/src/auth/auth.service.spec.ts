@@ -18,6 +18,7 @@ const CLIENT = {
   name: 'متدرب',
   email: 'client@wizzapp.local',
   passwordHash: 'hashed-client',
+  archivedAt: null as Date | null,
 };
 
 describe('AuthService', () => {
@@ -153,6 +154,26 @@ describe('AuthService', () => {
       await expect(
         service.validatePayload({ sub: TRAINER.id, role: Role.Client }),
       ).rejects.toBeInstanceOf(UnauthorizedException);
+    });
+  });
+
+  describe('archived clients', () => {
+    it('refuses an archived client even with the right password', async () => {
+      accounts.findClientByEmail.mockResolvedValue({ ...CLIENT, archivedAt: new Date() });
+      passwords.compare.mockResolvedValue(true);
+
+      await expect(
+        service.login({ email: CLIENT.email, password: 'correct' }),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
+    });
+
+    it('still checks the password of an archived client, so timing says nothing', async () => {
+      accounts.findClientByEmail.mockResolvedValue({ ...CLIENT, archivedAt: new Date() });
+      passwords.compare.mockResolvedValue(true);
+
+      await service.login({ email: CLIENT.email, password: 'correct' }).catch(() => undefined);
+
+      expect(passwords.compare).toHaveBeenCalledWith('correct', CLIENT.passwordHash);
     });
   });
 

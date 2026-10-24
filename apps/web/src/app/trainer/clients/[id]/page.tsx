@@ -46,7 +46,7 @@ export default function ClientProfilePage() {
         />
       ) : (
         <>
-          <ProfileHero client={profile.data} />
+          <ProfileHero client={profile.data} onChanged={profile.reload} />
 
           <div
             role="tablist"

@@ -11,11 +11,19 @@ import { Num, formatNumber } from '@/components/ui/Num';
 import { api } from '@/lib/api';
 import { useApi } from '@/lib/useApi';
 
-/** The segmented filter above the roster. `null` = الكل. */
-const FILTERS: { label: string; value: AdherenceStatus | null }[] = [
+/**
+ * The segmented filter above the roster. The first three narrow the active
+ * roster in the browser; 'archived' is different — it asks the API for a
+ * different list, because archived clients are deliberately absent from the
+ * one the dashboard counts.
+ */
+type Filter = AdherenceStatus | 'archived' | null;
+
+const FILTERS: { label: string; value: Filter }[] = [
   { label: 'الكل', value: null },
   { label: 'ملتزم', value: 'committed' },
   { label: 'متأخر', value: 'behind' },
+  { label: 'المؤرشفون', value: 'archived' },
 ];
 
 // Latin numerals, per the handoff — `ar-EG` alone renders ٩ سبتمبر.
@@ -26,13 +34,19 @@ const TODAY_LABEL = new Intl.DateTimeFormat('ar-EG-u-nu-latn', {
 });
 
 export default function ClientsPage() {
-  const clients = useApi<ClientSummary[]>(
-    (signal) => api.get<ClientSummary[]>('/clients', undefined, signal),
-    [],
-  );
-
   const [query, setQuery] = useState('');
-  const [filter, setFilter] = useState<AdherenceStatus | null>(null);
+  const [filter, setFilter] = useState<Filter>(null);
+  const showingArchived = filter === 'archived';
+
+  const clients = useApi<ClientSummary[]>(
+    (signal) =>
+      api.get<ClientSummary[]>(
+        '/clients',
+        showingArchived ? { archived: 'true' } : undefined,
+        signal,
+      ),
+    [showingArchived],
+  );
 
   const all = useMemo(() => clients.data ?? [], [clients.data]);
 
@@ -42,7 +56,10 @@ export default function ClientsPage() {
     const term = query.trim().toLowerCase();
     return all.filter((client) => {
       const matchesQuery = !term || client.name.toLowerCase().includes(term);
-      const matchesFilter = filter === null || client.status === filter;
+      // The archived list arrives pre-filtered, so only the status filters
+      // have anything left to narrow.
+      const matchesFilter =
+        filter === null || filter === 'archived' || client.status === filter;
       return matchesQuery && matchesFilter;
     });
   }, [all, query, filter]);
@@ -88,18 +105,39 @@ export default function ClientsPage() {
         <ErrorNote message={clients.error.message} onRetry={clients.reload} />
       ) : (
         <>
-          <div className="grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(180px,1fr))]">
-            <StatTile label="متدربين نشطين" value={formatNumber(stats.total)} />
-            <StatTile label="سجّلوا اليوم" value={formatNumber(stats.loggedToday)} tone="lime" />
-            <StatTile
-              label="متأخرين بالتسجيل"
-              value={formatNumber(stats.behind)}
-              tone="accent"
-            />
-            <StatTile label="متوسط الالتزام" value={`${stats.adherence}%`} />
-          </div>
+          {showingArchived ? (
+            <p className="rounded-[14px] border border-line bg-surface-alt px-5 py-4 text-[14px] leading-relaxed text-text-muted">
+              هؤلاء متدربون أوقفت العمل معهم. سجلّهم وبرامجهم محفوظة بالكامل، وهم خارج
+              الإحصاءات ولا يستطيعون الدخول للتطبيق. افتح ملف أي منهم لإرجاعه.
+            </p>
+          ) : (
+            <div className="grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(180px,1fr))]">
+              <StatTile label="متدربين نشطين" value={formatNumber(stats.total)} />
+              <StatTile label="سجّلوا اليوم" value={formatNumber(stats.loggedToday)} tone="lime" />
+              <StatTile
+                label="متأخرين بالتسجيل"
+                value={formatNumber(stats.behind)}
+                tone="accent"
+              />
+              <StatTile label="متوسط الالتزام" value={`${stats.adherence}%`} />
+            </div>
+          )}
 
-          {all.length === 0 ? (
+          {all.length === 0 && showingArchived ? (
+            <EmptyState
+              title="لا يوجد متدربون مؤرشفون"
+              body="كل متدربيك نشطون. الأرشفة تُستخدم لمن توقّف عن التدريب دون حذف سجلّه."
+              action={
+                <button
+                  type="button"
+                  onClick={() => setFilter(null)}
+                  className="flex h-[46px] items-center rounded-full bg-accent px-5 font-[family-name:var(--font-display)] text-[16px] font-bold text-accent-ink transition-colors hover:bg-accent-hover"
+                >
+                  رجوع للمتدربين
+                </button>
+              }
+            />
+          ) : all.length === 0 ? (
             <EmptyState
               title="لا يوجد متدربون بعد"
               body="أضف أول متدرب لتبدأ في بناء برنامجه التدريبي وخطته الغذائية."

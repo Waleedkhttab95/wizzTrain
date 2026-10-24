@@ -33,6 +33,12 @@ export interface ClientSummary {
   /** Count of `true` in `weekStrip`, 0-7. */
   daysLoggedThisWeek: number;
   status: AdherenceStatus;
+  /**
+   * When the trainer archived them, or null while they are active. Archived
+   * clients keep their history but leave the roster, drop out of the
+   * adherence average, and cannot sign in.
+   */
+  archivedAt: string | null;
 }
 
 export interface ClientProfile extends ClientSummary {

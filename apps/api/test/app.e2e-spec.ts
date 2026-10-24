@@ -528,6 +528,95 @@ describe('Personal Training Platform (e2e)', () => {
     });
   });
 
+
+  describe('F10 — archiving a client', () => {
+    // This block archives and then restores, so later blocks still find the
+    // client live on the roster.
+    const CLIENT_PASSWORD_NOW = 'ClientChosen123';
+
+    const roster = (archived?: boolean) =>
+      http
+        .get(`${API}/clients${archived ? '?archived=true' : ''}`)
+        .set('Authorization', `Bearer ${trainerToken}`)
+        .expect(200);
+
+    it('starts with the client on the active roster and none archived', async () => {
+      const active = await roster();
+      expect(active.body.map((c: { id: string }) => c.id)).toContain(clientId);
+      expect(active.body.find((c: { id: string }) => c.id === clientId).archivedAt).toBeNull();
+
+      const archived = await roster(true);
+      expect(archived.body.map((c: { id: string }) => c.id)).not.toContain(clientId);
+    });
+
+    it('moves them to the archived roster, keeping their records', async () => {
+      await http
+        .post(`${API}/clients/${clientId}/archive`)
+        .set('Authorization', `Bearer ${trainerToken}`)
+        .expect(204);
+
+      const active = await roster();
+      expect(active.body.map((c: { id: string }) => c.id)).not.toContain(clientId);
+
+      const archived = await roster(true);
+      const row = archived.body.find((c: { id: string }) => c.id === clientId);
+      expect(row).toBeDefined();
+      expect(row.archivedAt).not.toBeNull();
+
+      // The profile — and everything hanging off it — is still reachable.
+      const { body } = await http
+        .get(`${API}/clients/${clientId}`)
+        .set('Authorization', `Bearer ${trainerToken}`)
+        .expect(200);
+      expect(body.activeProgram).not.toBeNull();
+    });
+
+    it('stops an archived client signing in', async () => {
+      await http
+        .post(`${API}/auth/login`)
+        .send({ email: clientEmail, password: CLIENT_PASSWORD_NOW })
+        .expect(401);
+    });
+
+    it('invalidates a token the archived client already held', async () => {
+      await http
+        .get(`${API}/auth/me`)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .expect(401);
+    });
+
+    it('does not let a client archive anyone', async () => {
+      await http
+        .post(`${API}/clients/${clientId}/archive`)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .expect(401);
+    });
+
+    it('restores them, and they can sign in again', async () => {
+      await http
+        .delete(`${API}/clients/${clientId}/archive`)
+        .set('Authorization', `Bearer ${trainerToken}`)
+        .expect(204);
+
+      const active = await roster();
+      expect(active.body.map((c: { id: string }) => c.id)).toContain(clientId);
+
+      const { body } = await http
+        .post(`${API}/auth/login`)
+        .send({ email: clientEmail, password: CLIENT_PASSWORD_NOW })
+        .expect(200);
+
+      clientToken = body.accessToken;
+    });
+
+    it('returns 404 archiving a client the trainer does not own', async () => {
+      await http
+        .post(`${API}/clients/${trainerId}/archive`)
+        .set('Authorization', `Bearer ${trainerToken}`)
+        .expect(404);
+    });
+  });
+
   describe('role and ownership enforcement', () => {
     let otherClientToken: string;
 

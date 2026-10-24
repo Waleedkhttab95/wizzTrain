@@ -25,8 +25,8 @@ export class ClientsService {
 
   private readonly fileUrl = (filename: string) => this.videos.toUrl(filename);
 
-  async list(trainerId: string): Promise<ClientSummary[]> {
-    const rows = await this.clients.findAllForTrainer(trainerId);
+  async list(trainerId: string, archived = false): Promise<ClientSummary[]> {
+    const rows = await this.clients.findAllForTrainer(trainerId, archived);
     return rows.map(toClientSummary);
   }
 
@@ -50,6 +50,17 @@ export class ClientsService {
     });
 
     return { ...toClientSummary(row), ...emptyRelations(row) };
+  }
+
+  /**
+   * Archives a client, or brings them back. Archiving keeps every record
+   * they have — programs, plans and logs all stay — but takes them out of
+   * the roster and the adherence average, and stops them signing in. It is
+   * the honest alternative to deleting someone who simply stopped training.
+   */
+  async setArchived(trainerId: string, id: string, archived: boolean): Promise<void> {
+    await this.getOwnedOrThrow(id, trainerId);
+    await this.clients.update(id, { archivedAt: archived ? new Date() : null });
   }
 
   /**
@@ -145,6 +156,7 @@ function toClientSummary(row: ClientSummaryRow): ClientSummary {
     startWeightKg: row.startWeightKg,
     startDate: row.startDate ? toIsoDate(row.startDate) : null,
     createdAt: row.createdAt.toISOString(),
+    archivedAt: row.archivedAt ? row.archivedAt.toISOString() : null,
     ...summariseAdherence(row.dailyLogs),
   };
 }

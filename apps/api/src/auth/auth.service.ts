@@ -27,7 +27,13 @@ export class AuthService {
 
     const client = await this.accounts.findClientByEmail(email);
     if (client) {
-      return this.issue(client, Role.Client, dto.password);
+      // Check the password first regardless, so an archived account cannot be
+      // distinguished from a live one by how fast the request comes back.
+      const response = await this.issue(client, Role.Client, dto.password);
+      if (client.archivedAt) {
+        throw new UnauthorizedException(ARCHIVED_MESSAGE);
+      }
+      return response;
     }
 
     // Run a hash comparison against a dummy value even when no account exists,
@@ -80,6 +86,13 @@ export class AuthService {
       throw new UnauthorizedException('الحساب لم يعد موجودًا');
     }
 
+    // Archiving has to bite here too. Tokens live for days, so checking only
+    // at login would leave an archived client signed in for the rest of the
+    // week.
+    if ('archivedAt' in account && account.archivedAt) {
+      throw new UnauthorizedException(ARCHIVED_MESSAGE);
+    }
+
     return { id: account.id, role: payload.role, email: account.email, name: account.name };
   }
 
@@ -102,6 +115,9 @@ export class AuthService {
     };
   }
 }
+
+/** Says the account is closed without hinting at why, or by whom. */
+const ARCHIVED_MESSAGE = 'هذا الحساب موقوف. تواصل مع مدربك.';
 
 /** A real bcrypt hash of a value nobody can guess; only used to equalise timing. */
 const DUMMY_HASH = '$2b$12$C6UzMDM.H6dfI/f/IKcEeO6b5T3dGX4z3n0lQm0K4qBqNqQ8oNQZa';
