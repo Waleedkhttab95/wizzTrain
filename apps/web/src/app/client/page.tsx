@@ -170,11 +170,13 @@ export default function HomePage() {
             <Num>{latestWeight === null ? '—' : decimal(latestWeight)}</Num>
           </p>
           {weightDelta !== null && (
-            <Num
+            // Only the figure goes inside the isolate. Pulling "كجم" in with
+            // it puts the unit on the wrong side of the number.
+            <p
               className={`text-[13px] font-bold ${weightDelta <= 0 ? 'text-lime-strong' : 'text-accent-pressed'}`}
             >
-              {`${weightDelta > 0 ? '+' : ''}${decimal(weightDelta)} كجم`}
-            </Num>
+              <Num>{`${weightDelta > 0 ? '+' : ''}${decimal(weightDelta)}`}</Num> كجم
+            </p>
           )}
         </div>
 

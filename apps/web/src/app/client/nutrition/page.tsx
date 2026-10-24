@@ -99,10 +99,12 @@ export default function ClientNutritionPage() {
           radius={35}
           stroke={10}
           percent={kcalPct}
-          color={palette.accentTintInk}
-          trackColor="rgba(44,24,16,.18)"
+          // This ring sits on the accent band, where the rest of the type is
+          // white; the darker ink used elsewhere does not carry on orange.
+          color={palette.accentInk}
+          trackColor="rgba(255,255,255,.28)"
           label={`${kcalPct}%`}
-          labelColor={palette.accentTintInk}
+          labelColor={palette.accentInk}
           labelSize={19}
         />
       </section>

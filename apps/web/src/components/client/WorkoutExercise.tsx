@@ -83,9 +83,14 @@ export function WorkoutExercise({
           <h2 className="font-[family-name:var(--font-display)] text-[21px] leading-[1.25] font-bold">
             {exercise.name}
           </h2>
-          <Num className="text-[14px] font-semibold text-text-muted">
-            {`${exercise.sets} × ${exercise.reps}${exercise.restInterval ? ` · راحة ${exercise.restInterval}` : ''}`}
-          </Num>
+          {/* Reps and the rest interval are free text the trainer types, and
+              they routinely contain Arabic ("60 ثانية"). Forcing the whole
+              line into an LTR isolate would flip those words to the wrong
+              side, so only tabular numerals are applied here. */}
+          <p className="tnum text-[14px] font-semibold text-text-muted">
+            {exercise.sets} × {exercise.reps}
+            {exercise.restInterval ? ` · راحة ${exercise.restInterval}` : ''}
+          </p>
         </div>
 
         <span
