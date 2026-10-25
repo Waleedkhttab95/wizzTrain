@@ -45,7 +45,7 @@ export default function TemplatesPage() {
         </div>
         <Link
           href="/trainer/templates/new"
-          className="flex h-[50px] items-center rounded-full bg-accent px-6 font-[family-name:var(--font-display)] text-[17px] font-bold text-accent-ink shadow-[0_2px_6px_rgba(44,24,16,.12)] transition-colors hover:bg-accent-hover"
+          className="flex h-[50px] items-center rounded-full bg-accent px-6 font-[family-name:var(--font-display)] text-[17px] font-bold text-accent-ink shadow-[0_2px_8px_rgba(0,0,20,.45)] transition-colors hover:bg-accent-hover"
         >
           + جدول جديد
         </Link>
@@ -78,7 +78,7 @@ export default function TemplatesPage() {
           {templates.data!.map((template) => (
             <li
               key={template.id}
-              className="flex flex-col gap-3 rounded-[16px] bg-surface p-5 border border-line-soft transition-shadow hover:shadow-[0_6px_18px_rgba(44,24,16,.10)]"
+              className="flex flex-col gap-3 rounded-[16px] bg-surface p-5 border border-line-soft transition-shadow hover:shadow-[0_10px_28px_rgba(0,0,20,.55)]"
             >
               <div className="min-w-0">
                 <h2 className="truncate font-[family-name:var(--font-display)] text-[20px] leading-tight font-bold">
@@ -109,7 +109,7 @@ export default function TemplatesPage() {
                 <button
                   onClick={() => remove(template)}
                   disabled={busy === template.id}
-                  className="h-10 rounded-full border border-[rgba(255,138,91,.35)] px-4 text-[13.5px] font-semibold text-accent-pressed transition-colors hover:bg-accent-tint disabled:opacity-50"
+                  className="h-10 rounded-full border border-accent/40 px-4 text-[13.5px] font-semibold text-accent-pressed transition-colors hover:bg-accent-tint disabled:opacity-50"
                 >
                   حذف
                 </button>

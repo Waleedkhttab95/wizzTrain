@@ -65,7 +65,7 @@ export function TrainerShell({ children }: { children: ReactNode }) {
                   'transition-colors duration-150',
                   active
                     ? 'bg-accent-tint text-accent-pressed'
-                    : 'text-text hover:bg-[rgba(198,113,57,.14)]',
+                    : 'text-text hover:bg-surface-alt',
                 )}
               >
                 <span
@@ -94,27 +94,32 @@ export function TrainerShell({ children }: { children: ReactNode }) {
           </Link>
         </div>
 
-        <div className="flex items-center gap-2.5 px-1.5">
-          <div className="grid size-9 flex-none place-items-center rounded-full bg-lime text-[14px] font-bold text-surface">
-            {initials(user?.name ?? '')}
+        {/* Two actions plus the name no longer fit on one line, so the
+            account row stacks and the actions share the line below it. */}
+        <div className="flex flex-col gap-2 px-1.5">
+          <div className="flex items-center gap-2.5">
+            <div className="grid size-9 flex-none place-items-center rounded-full bg-lime text-[14px] font-bold text-bg">
+              {initials(user?.name ?? '')}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[14px] font-semibold">{user?.name}</p>
+              <p className="text-[12px] text-text-faint">مدرب</p>
+            </div>
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-[14px] font-semibold">{user?.name}</p>
-            <p className="text-[12px] text-text-faint">مدرب</p>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setPasswordOpen(true)}
+              className="text-[13px] font-semibold text-text-muted transition-colors hover:text-accent-pressed"
+            >
+              كلمة المرور
+            </button>
+            <button
+              onClick={logout}
+              className="text-[13px] font-semibold text-text-muted transition-colors hover:text-accent-pressed"
+            >
+              خروج
+            </button>
           </div>
-          <button
-            onClick={() => setPasswordOpen(true)}
-            className="p-1.5 text-[13px] font-semibold text-text-muted transition-colors hover:text-accent-pressed"
-          >
-            كلمة المرور
-          </button>
-          <button
-            onClick={logout}
-            title="خروج"
-            className="p-1.5 text-[13px] font-semibold text-text-muted transition-colors hover:text-accent-pressed"
-          >
-            خروج
-          </button>
         </div>
       </aside>
 

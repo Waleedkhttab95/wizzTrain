@@ -264,7 +264,7 @@ export default function LogWizardPage() {
           <button
             onClick={advance}
             disabled={saving}
-            className="h-[60px] rounded-full bg-accent font-[family-name:var(--font-display)] text-[20px] font-bold text-accent-ink shadow-[0_2px_6px_rgba(44,24,16,.12)] transition-colors hover:bg-accent-hover active:bg-accent-pressed disabled:opacity-60"
+            className="h-[60px] rounded-full bg-accent font-[family-name:var(--font-display)] text-[20px] font-bold text-accent-ink shadow-[0_2px_8px_rgba(0,0,20,.45)] transition-colors hover:bg-accent-hover active:bg-accent-pressed disabled:opacity-60"
           >
             {saving ? 'جارٍ الإرسال…' : step === total - 1 ? 'خلّصنا — أرسل لمدربي' : 'التالي'}
           </button>
@@ -353,7 +353,7 @@ function DoneScreen({
         </Link>
         <button
           onClick={onEdit}
-          className="h-13 rounded-full border border-[rgba(255,255,255,.16)] text-[15px] font-semibold transition-colors hover:bg-[rgba(255,255,255,.07)]"
+          className="h-13 rounded-full border border-line text-[15px] font-semibold transition-colors hover:bg-surface-alt"
         >
           تعديل ما سجّلته
         </button>

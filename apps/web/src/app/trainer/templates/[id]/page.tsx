@@ -195,7 +195,7 @@ export default function TemplateEditorPage() {
             </span>
             <button
               onClick={() => setDraft((c) => ({ ...c, days: c.days.filter((d) => d.key !== day.key) }))}
-              className="rounded-full border border-[rgba(255,138,91,.35)] px-4 py-[9px] text-[13.5px] font-semibold text-accent-pressed transition-colors hover:bg-accent-tint"
+              className="rounded-full border border-accent/40 px-4 py-[9px] text-[13.5px] font-semibold text-accent-pressed transition-colors hover:bg-accent-tint"
             >
               حذف اليوم
             </button>

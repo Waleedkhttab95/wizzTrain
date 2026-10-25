@@ -26,19 +26,22 @@ export function ClientShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-dvh justify-center bg-surface-alt">
-      <div className="relative flex min-h-dvh w-full max-w-[430px] flex-col overflow-hidden bg-bg shadow-[0_6px_24px_rgba(44,24,16,.10)]">
+      <div className="relative flex min-h-dvh w-full max-w-[430px] flex-col overflow-hidden bg-bg shadow-[0_12px_32px_rgba(0,0,20,.6)]">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -top-[120px] size-[320px] rounded-full"
+          className="pointer-events-none absolute -top-[120px] size-[320px] rounded-full blur-[34px]"
           style={{
             insetInlineEnd: '-100px',
-            background: 'radial-gradient(circle, rgba(255,107,53,.22), rgba(255,107,53,0) 70%)',
+            background:
+              'radial-gradient(38% 42% at 36% 32%, rgba(237,32,150,.34), transparent 70%),' +
+              'radial-gradient(42% 46% at 66% 40%, rgba(23,211,255,.26), transparent 72%),' +
+              'radial-gradient(58% 62% at 40% 70%, rgba(0,0,184,.5), transparent 74%)',
           }}
         />
 
         <div className="relative z-1 flex flex-1 flex-col pb-[92px]">{children}</div>
 
-        <nav className="fixed bottom-0 z-5 flex w-full max-w-[430px] gap-1.5 border-t border-line bg-surface px-3 pt-2.5 pb-3.5 shadow-[0_-4px_16px_rgba(44,24,16,.07)]">
+        <nav className="fixed bottom-0 z-5 flex w-full max-w-[430px] gap-1.5 border-t border-line bg-surface px-3 pt-2.5 pb-3.5 shadow-[0_-6px_22px_rgba(0,0,20,.5)]">
           {TABS.map((tab) => {
             // `/client` must not light up for every nested route.
             const active = pathname === tab.href;

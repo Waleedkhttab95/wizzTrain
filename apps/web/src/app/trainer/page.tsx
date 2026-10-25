@@ -93,7 +93,7 @@ export default function ClientsPage() {
         </div>
         <Link
           href="/trainer/add"
-          className="flex h-[50px] items-center rounded-full bg-accent px-6 font-[family-name:var(--font-display)] text-[17px] font-bold text-accent-ink shadow-[0_2px_6px_rgba(44,24,16,.12)] transition-colors duration-150 hover:bg-accent-hover"
+          className="flex h-[50px] items-center rounded-full bg-accent px-6 font-[family-name:var(--font-display)] text-[17px] font-bold text-accent-ink shadow-[0_2px_8px_rgba(0,0,20,.45)] transition-colors duration-150 hover:bg-accent-hover"
         >
           + إضافة متدرب جديد
         </Link>

@@ -1,33 +1,32 @@
 /* ──────────────────────────────────────────────────────────────────────────
-   Landing page — warm editorial system.
+   Landing page — the Let's Ops identity.
 
-   Tokens read off the reference demo: a cream ground, a warm second ground
-   for alternating bands, a deep roast brown for ink and for the one dark
-   band, terracotta as the single accent, and hairline warm borders. Card
-   edges are outlined rather than shadowed, and every heading is a serif.
-
-   Scoped to `.page`: the signed-in app keeps its own dark theme, so none of
-   this leaks past the marketing surface.
+   Same ground and the same accents as the signed-in app, so the page a
+   visitor lands on and the product behind the login read as one thing. The
+   local tokens below only alias the app-wide ones; nothing here invents a
+   colour.
    ────────────────────────────────────────────────────────────────────────── */
 
 .page {
-  --cream: #fffaf0;
-  --cream-warm: #fff5e6;
-  --paper: #ffffff;
-  --ink: #2c1810;
-  --ink-soft: #6b5344;
-  --line: #e8ddd4;
-  --primary: #ff6b35;
-  --primary-deep: #e2521e;
-  --secondary: #8b4513;
+  /* Midnight Navy and its lifted surfaces. */
+  --cream: var(--color-bg);
+  --cream-warm: var(--color-surface-alt);
+  --paper: var(--color-surface);
+  /* "ink" is the type colour, which on this ground is Ice Tint. */
+  --ink: var(--color-text);
+  --ink-soft: var(--color-text-muted);
+  --line: var(--color-border);
+  --primary: var(--color-accent);
+  --primary-deep: var(--color-accent-hover);
+  --secondary: var(--color-brand-cyan);
 
-  --serif: var(--font-playfair), 'Iowan Old Style', Georgia, serif;
-  --serif-ar: var(--font-naskh), 'Times New Roman', serif;
-  --sans: var(--font-karla), system-ui, sans-serif;
-  --sans-ar: var(--font-almarai), var(--font-karla), system-ui, sans-serif;
+  --serif: var(--font-brando), var(--font-plex-arabic), system-ui, sans-serif;
+  --serif-ar: var(--font-brando), var(--font-plex-arabic), system-ui, sans-serif;
+  --sans: var(--font-plex-arabic), system-ui, sans-serif;
+  --sans-ar: var(--font-brando), var(--font-plex-arabic), system-ui, sans-serif;
 
-  --radius: 16px;
-  --radius-sm: 12px;
+  --radius: 18px;
+  --radius-sm: 14px;
 
   background: var(--cream);
   color: var(--ink);
@@ -88,7 +87,7 @@
   align-items: center;
   justify-content: center;
   gap: 9px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   font-family: var(--sans-ar);
   font-weight: 700;
@@ -148,7 +147,7 @@
   align-items: center;
   gap: 26px;
   background: var(--cream);
-  border: 2px solid var(--ink);
+  border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 12px 20px;
 }
@@ -197,7 +196,7 @@
   align-items: center;
   gap: 9px;
   background: var(--paper);
-  border: 2px solid var(--ink);
+  border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   padding: 7px 15px;
   font-size: 13.5px;
@@ -256,16 +255,24 @@
 .tile {
   width: 100%;
   min-width: 0;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--line);
   border-radius: var(--radius);
   aspect-ratio: 4 / 3;
   display: grid;
   place-items: center;
   color: var(--secondary);
-  background: linear-gradient(150deg, #f6e3d2, #fff2e2);
+  background:
+    radial-gradient(44% 48% at 32% 30%, rgba(237, 32, 150, 0.4), transparent 72%),
+    radial-gradient(46% 50% at 70% 40%, rgba(23, 211, 255, 0.32), transparent 72%),
+    radial-gradient(62% 66% at 46% 76%, rgba(0, 0, 184, 0.62), transparent 76%),
+    var(--color-surface);
 }
 .tile:nth-child(odd) {
-  background: linear-gradient(150deg, #ffe6d5, #fdf3e8);
+  background:
+    radial-gradient(44% 48% at 66% 28%, rgba(255, 190, 74, 0.34), transparent 72%),
+    radial-gradient(48% 52% at 30% 44%, rgba(237, 32, 150, 0.34), transparent 72%),
+    radial-gradient(60% 64% at 56% 78%, rgba(0, 0, 184, 0.6), transparent 76%),
+    var(--color-surface);
 }
 .tileTall {
   aspect-ratio: 3 / 4;
@@ -283,7 +290,7 @@
   transform: translateX(50%);
   background: var(--primary);
   color: var(--paper);
-  border: 2px solid var(--ink);
+  border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   padding: 12px 22px;
   text-align: center;
@@ -296,9 +303,13 @@
   line-height: 1.1;
 }
 .collageBadge span {
+  display: block;
+  /* The Arabic caption is longer than the figure above it and would break
+     over three lines inside the badge otherwise. */
+  white-space: nowrap;
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
 }
 
 /* ── Section frame ──────────────────────────────────────────────────────── */
@@ -326,7 +337,7 @@
   color: var(--ink-soft);
 }
 .dark .secHead p {
-  color: #d9c7b8;
+  color: var(--ink-soft);
 }
 .dark .secHead h2 {
   color: var(--cream);
@@ -390,7 +401,10 @@
   border-radius: var(--radius-sm);
   display: grid;
   place-items: center;
-  background: linear-gradient(150deg, #ffe0cb, #fdf0e2);
+  background:
+    radial-gradient(60% 60% at 34% 32%, rgba(237, 32, 150, 0.42), transparent 74%),
+    radial-gradient(64% 64% at 70% 70%, rgba(23, 211, 255, 0.34), transparent 74%),
+    var(--color-surface-alt);
   color: var(--secondary);
 }
 .itemBody {
@@ -435,12 +449,16 @@
   padding-bottom: 54px;
 }
 .storyFrame {
-  border: 2px solid var(--ink);
+  border: 1px solid var(--line);
   border-radius: var(--radius);
   aspect-ratio: 4 / 3;
   display: grid;
   place-items: center;
-  background: linear-gradient(150deg, #f3ddc9, #fff4e6);
+  background:
+    radial-gradient(42% 46% at 30% 28%, rgba(255, 190, 74, 0.32), transparent 72%),
+    radial-gradient(46% 50% at 68% 38%, rgba(237, 32, 150, 0.38), transparent 72%),
+    radial-gradient(64% 68% at 48% 78%, rgba(0, 0, 184, 0.62), transparent 76%),
+    var(--color-surface);
   color: var(--secondary);
 }
 .quoteCard {
@@ -449,7 +467,7 @@
   inset-inline-start: 22px;
   inset-inline-end: 22px;
   background: var(--paper);
-  border: 2px solid var(--ink);
+  border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 18px 22px;
 }
@@ -651,7 +669,7 @@
   display: grid;
   place-items: center;
   background: var(--cream-warm);
-  border: 2px solid var(--ink);
+  border: 1px solid var(--line);
   font-family: var(--serif-ar);
   font-size: 15px;
   font-weight: 700;
@@ -679,7 +697,7 @@
   gap: 16px;
 }
 .planPicked {
-  border: 2px solid var(--ink);
+  border: 1px solid var(--line);
   background: var(--cream);
 }
 .planName {
@@ -747,7 +765,7 @@
 .final p {
   margin: 16px auto 0;
   max-width: 52ch;
-  color: #d9c7b8;
+  color: var(--ink-soft);
 }
 .final .btn {
   margin-top: 28px;
@@ -810,8 +828,11 @@
     grid-template-columns: 1fr;
   }
   /* Stacked, the collage would otherwise run the full column width and
-     tower over the copy it is meant to accompany. */
+     tower over the copy it is meant to accompany. The explicit width is
+     load-bearing: `margin-inline: auto` alone cancels a grid item's default
+     stretch, which collapses the tiles to the size of their icons. */
   .collage {
+    width: 100%;
     max-width: 520px;
     margin-inline: auto;
   }

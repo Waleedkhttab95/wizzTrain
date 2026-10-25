@@ -1,17 +1,8 @@
-import { Playfair_Display_SC } from 'next/font/google';
 import Link from 'next/link';
 import { AuthLink, NavActions } from './LandingActions';
 import { LandingMotion } from './LandingMotion';
 import styles from './landing.module.css';
-
-// The Arabic serif, the body sans and the numeral face are loaded once in
-// the root layout; only the Latin display face is particular to this page.
-const playfair = Playfair_Display_SC({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-  variable: '--font-playfair',
-  display: 'swap',
-});
+import { palette } from '@/lib/palette';
 
 function Star() {
   return (
@@ -186,7 +177,7 @@ const macros = [
 
 export function Landing() {
   return (
-    <div className={`${styles.page} ${playfair.variable}`}>
+    <div className={styles.page}>
       {/* Without scripting nothing flips the blocks to "shown", so undo the
           resting state outright. */}
       <noscript>
@@ -392,11 +383,11 @@ export function Landing() {
                 >
                   <defs>
                     <linearGradient id="weightFade" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#ff6b35" stopOpacity="0.22" />
-                      <stop offset="100%" stopColor="#ff6b35" stopOpacity="0" />
+                      <stop offset="0%" stopColor={palette.accent} stopOpacity="0.22" />
+                      <stop offset="100%" stopColor={palette.accent} stopOpacity="0" />
                     </linearGradient>
                   </defs>
-                  <g stroke="#e8ddd4" strokeWidth="1">
+                  <g stroke={palette.border} strokeWidth="1">
                     <line x1="46" y1="30" x2="620" y2="30" />
                     <line x1="46" y1="85" x2="620" y2="85" />
                     <line x1="46" y1="140" x2="620" y2="140" />
@@ -409,12 +400,12 @@ export function Landing() {
                   <polyline
                     points="46,44 128,62 210,80 292,106 374,122 456,144 538,164 620,182"
                     fill="none"
-                    stroke="#ff6b35"
+                    stroke={palette.accent}
                     strokeWidth="3"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
-                  <g fill="#fffaf0" stroke="#ff6b35" strokeWidth="3">
+                  <g fill={palette.surface} stroke={palette.accent} strokeWidth="3">
                     <circle cx="46" cy="44" r="5" />
                     <circle cx="128" cy="62" r="5" />
                     <circle cx="210" cy="80" r="5" />
@@ -423,10 +414,10 @@ export function Landing() {
                     <circle cx="456" cy="144" r="5" />
                     <circle cx="538" cy="164" r="5" />
                   </g>
-                  <circle cx="620" cy="182" r="7" fill="#ff6b35" />
+                  <circle cx="620" cy="182" r="7" fill={palette.accent} />
                   <g
-                    fill="#6b5344"
-                    fontFamily="var(--font-karla), sans-serif"
+                    fill={palette.textMuted}
+                    fontFamily="var(--font-plex-arabic), sans-serif"
                     fontWeight="700"
                     fontSize="15"
                     textAnchor="middle"
@@ -442,8 +433,8 @@ export function Landing() {
                     </text>
                   </g>
                   <g
-                    fill="#8b7361"
-                    fontFamily="var(--font-karla), sans-serif"
+                    fill={palette.textFaint}
+                    fontFamily="var(--font-plex-arabic), sans-serif"
                     fontWeight="600"
                     fontSize="14"
                     textAnchor="middle"

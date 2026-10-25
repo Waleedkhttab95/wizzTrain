@@ -273,7 +273,7 @@ function WeightChart({ logs, endWeek }: { logs: DailyLogView[]; endWeek: string 
       role="img"
       aria-label={`تطور الوزن عبر ${points.length} أسابيع، من ${dots[0].value} إلى ${dots[dots.length - 1].value} كجم`}
     >
-      <g stroke="rgba(255,255,255,.1)" strokeWidth="1">
+      <g stroke={palette.border} strokeWidth="1">
         {gridYs.map((y) => (
           <line key={y} x1="40" y1={y} x2="620" y2={y} />
         ))}

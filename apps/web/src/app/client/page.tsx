@@ -80,7 +80,7 @@ export default function HomePage() {
           onClick={() => setPasswordOpen(true)}
           title="تغيير كلمة المرور"
           aria-label="تغيير كلمة المرور"
-          className="grid size-[46px] flex-none place-items-center rounded-full bg-lime text-[15px] font-bold text-surface transition-opacity hover:opacity-85"
+          className="grid size-[46px] flex-none place-items-center rounded-full bg-lime text-[15px] font-bold text-bg transition-opacity hover:opacity-85"
         >
           {initials(me.data?.name ?? '')}
         </button>
@@ -109,9 +109,9 @@ export default function HomePage() {
       ) : (
         <Link
           href="/client/log"
-          className="flex items-center gap-3.5 rounded-[16px] bg-accent p-5 text-accent-ink shadow-[0_2px_6px_rgba(44,24,16,.12)] transition-colors hover:bg-accent-hover"
+          className="flex items-center gap-3.5 rounded-[16px] bg-accent p-5 text-accent-ink shadow-[0_2px_8px_rgba(0,0,20,.45)] transition-colors hover:bg-accent-hover"
         >
-          <span className="grid size-[46px] flex-none place-items-center rounded-full bg-[rgba(14,15,18,.18)]">
+          <span className="grid size-[46px] flex-none place-items-center rounded-full bg-[rgba(0,0,30,.24)]">
             <PlusIcon />
           </span>
           <span className="min-w-0 flex-1">

@@ -32,10 +32,13 @@ export const STATUS = {
 
 /**
  * Avatar fills, assigned deterministically so a client keeps their colour.
- * Light warm tints rather than saturated hues: the initials sit on top in
- * the ink colour, which no saturated fill in this palette reads well against.
+ *
+ * Deep tints of the four brand hues, carrying Ice Tint initials on top. The
+ * full-strength brand colours are reserved for meaning — magenta for the
+ * primary action, cyan for success, amber for warnings — so an avatar, which
+ * means nothing, never wears one.
  */
-const AVATAR_COLORS = ['#ffe3d5', '#ffd6c2', '#d7e7dd', '#c5dbce', '#fdf1dc', '#f0e2d2'];
+const AVATAR_COLORS = ['#3d0f49', '#0a4e6e', '#1a1a78', '#4a3708', '#52145f', '#073a52'];
 
 export function avatarColor(id: string): string {
   let hash = 0;

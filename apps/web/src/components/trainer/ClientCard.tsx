@@ -14,7 +14,7 @@ export function ClientCard({ client }: { client: ClientSummary }) {
   return (
     <Link
       href={`/trainer/clients/${client.id}`}
-      className="flex flex-col gap-4 rounded-[16px] bg-surface p-5 text-start border border-line-soft transition-shadow duration-150 hover:shadow-[0_6px_18px_rgba(44,24,16,.10)]"
+      className="flex flex-col gap-4 rounded-[16px] bg-surface p-5 text-start border border-line-soft transition-shadow duration-150 hover:shadow-[0_10px_28px_rgba(0,0,20,.55)]"
     >
       <div className="flex w-full items-center gap-3">
         <div

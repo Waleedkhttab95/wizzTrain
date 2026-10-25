@@ -133,9 +133,9 @@ export function GhostPill({
     <button
       {...rest}
       className={cn(
-        'flex h-12 items-center justify-center rounded-full border border-[rgba(255,255,255,.16)]',
+        'flex h-12 items-center justify-center rounded-full border border-line',
         'px-[22px] text-[15px] font-semibold transition-colors duration-150',
-        'hover:bg-[rgba(255,255,255,.07)] disabled:cursor-not-allowed disabled:opacity-40',
+        'hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-40',
         className,
       )}
     >

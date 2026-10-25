@@ -46,7 +46,7 @@ export function ClientScreen({
           </p>
           <Link
             href="/trainer"
-            className="rounded-full border border-[rgba(255,255,255,.16)] px-4 py-2 text-[13.5px] font-semibold transition-colors hover:bg-[rgba(255,255,255,.07)]"
+            className="rounded-full border border-line px-4 py-2 text-[13.5px] font-semibold transition-colors hover:bg-surface-alt"
           >
             اختر متدربًا
           </Link>

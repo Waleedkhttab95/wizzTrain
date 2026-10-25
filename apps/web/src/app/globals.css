@@ -1,95 +1,116 @@
 @import 'tailwindcss';
 
 /* ─────────────────────────────────────────────────────────────────────────
-   WizzTrain design tokens — warm editorial system.
+   WizzTrain design tokens — the Let's Ops visual identity.
 
-   A cream ground, white cards, roast-brown ink, terracotta for action and a
-   deep pine green for success. Hairline warm borders rather than shadows, and
-   serif headings in both scripts. Single committed light theme; the token
-   names are unchanged from the previous dark set, so every screen follows
-   this file rather than carrying its own colours.
+   Brand colours, verbatim from the identity file:
+     Electric Blue    #0000B8   primary
+     Vibrant Magenta  #ED2096   secondary
+     Amber Gold       #FFBE4A   supporting
+     Cyber Cyan       #17D3FF   supporting
+     Midnight Navy    #00004F   neutral, dark
+     Ice Tint         #E4F5F9   neutral, light
+
+   The ground is Midnight Navy and the type is Ice Tint. On that ground the
+   identity's own guidance applies directly: magenta is described there as
+   the colour that carries on dark surfaces and suits dashboards, so it takes
+   the primary action. Electric Blue cannot be a foreground here — it scores
+   1.5:1 against the navy — so it does its work as a ground and inside the
+   brand gradient instead.
+
+   Two states the identity does not name had to be filled: success borrows
+   Cyber Cyan, and the destructive red below is the one colour from outside
+   the palette. Every accent pair was checked for colour-blind separation.
    ───────────────────────────────────────────────────────────────────────── */
 @theme {
-  /* Ground and structure */
-  --color-bg: #fffaf0;
-  --color-surface: #ffffff;
-  --color-surface-alt: #fff5e6;
-  --color-border: #e8ddd4;
-  --color-border-dashed: #d8c9bb;
-  --color-input-bg: #ffffff;
+  /* ── Brand, exact ──────────────────────────────────────────────────── */
+  --color-brand-blue: #0000b8;
+  --color-brand-magenta: #ed2096;
+  --color-brand-amber: #ffbe4a;
+  --color-brand-cyan: #17d3ff;
+  --color-brand-navy: #00004f;
+  --color-brand-ice: #e4f5f9;
 
-  /* Text */
-  --color-text: #2c1810;
-  --color-text-2: #4a3426;
-  --color-text-muted: #6b5344;
-  --color-text-faint: #8b7361;
-  --color-placeholder: #a08a76;
+  /* ── Ground and structure — Midnight Navy, lifted in steps ─────────── */
+  --color-bg: #00004f;
+  --color-surface: #0a0a5e;
+  --color-surface-alt: #13136b;
+  --color-border: #2a2a85;
+  --color-border-dashed: #3a3a96;
+  --color-input-bg: #06063f;
 
-  /* Accent — terracotta, the primary action */
-  --color-accent: #ff6b35;
-  --color-accent-hover: #e2521e;
-  --color-accent-pressed: #ff8a5f;
+  /* ── Text — Ice Tint, stepped down. All of these clear 4.5:1 on the
+        ground and on every surface above. ──────────────────────────────── */
+  --color-text: #e4f5f9;
+  --color-text-2: #c3d8e6;
+  --color-text-muted: #9cb3cc;
+  --color-text-faint: #7b92b0;
+  --color-placeholder: #6b82a0;
+
+  /* ── Accent — Vibrant Magenta, the primary action ──────────────────── */
+  --color-accent: #ed2096;
+  --color-accent-hover: #ff3ba9;
+  --color-accent-pressed: #ff6ec0;
   --color-accent-ink: #ffffff;
-  --color-accent-tint: #fff0e8;
-  --color-accent-tint-2: #ffe3d5;
-  --color-accent-tint-3: #ffd6c2;
-  --color-accent-tint-ink: #9c3a12;
+  --color-accent-tint: #2a0a33;
+  --color-accent-tint-2: #3d0f49;
+  --color-accent-tint-3: #52145f;
+  --color-accent-tint-ink: #ff8fcd;
 
-  /* Pine green — success. Checked against the accent for red-blind vision:
-     a lighter, more olive green reads as the same colour as the terracotta,
-     so the separation here comes from lightness, not hue alone. */
-  --color-lime: #276749;
-  --color-lime-strong: #2f7a56;
-  --color-lime-mid: #1f5539;
-  --color-lime-deep: #17402b;
-  --color-lime-tint: #e6f0ea;
-  --color-lime-tint-2: #d7e7dd;
-  --color-lime-tint-3: #c5dbce;
-  --color-lime-ink: #1f5539;
-  --color-lime-ink-strong: #17402b;
+  /* ── Success — Cyber Cyan. It separates from the magenta at ΔE 17 even
+        under red-blind vision, which a green would not have done. ─────── */
+  --color-lime: #17d3ff;
+  --color-lime-strong: #5ce0ff;
+  --color-lime-mid: #00b4e0;
+  --color-lime-deep: #0089ab;
+  --color-lime-tint: #052b3d;
+  --color-lime-tint-2: #073a52;
+  --color-lime-tint-3: #0a4e6e;
+  --color-lime-ink: #8ae9ff;
+  --color-lime-ink-strong: #c2f3ff;
 
-  /* Status. These four cannot all be told apart by colour alone, so every
-     status in the UI also carries its own word. */
-  --color-warn: #b5790f;
+  /* ── Warning — Amber Gold ──────────────────────────────────────────── */
+  --color-warn: #ffbe4a;
 
-  /* Type — Noto Naskh Arabic for headings, Almarai for body and UI, Karla
-     for numerals so digits stay even in tables and meters. */
-  --font-display: var(--font-naskh), 'Times New Roman', serif;
-  --font-sans: var(--font-almarai), var(--font-karla), system-ui, sans-serif;
-  --font-num: var(--font-karla), system-ui, sans-serif;
+  /* ── Type — Brando Arabic, with the approved alternate behind it.
+        Numerals come from Plex, which carries tabular Latin figures that
+        Brando's Arabic cuts do not. ────────────────────────────────────── */
+  --font-display: var(--font-brando), var(--font-plex-arabic), system-ui, sans-serif;
+  --font-sans: var(--font-brando), var(--font-plex-arabic), system-ui, sans-serif;
+  --font-num: var(--font-plex-arabic), system-ui, sans-serif;
 
-  /* Radii — the warm system is squarer than the old pill-heavy one */
+  /* ── Radii ─────────────────────────────────────────────────────────── */
   --radius-pill: 999px;
-  --radius-card: 16px;
+  --radius-card: 18px;
   --radius-card-sm: 14px;
   --radius-row: 12px;
 
   /* ── Legacy aliases ───────────────────────────────────────────────────
-     Screens still referencing the older names resolve to the new palette,
-     so nothing renders off-brand. */
+     Screens still referencing the older names resolve to the brand palette,
+     so nothing renders off-identity. */
   --color-surface-2: var(--color-surface-alt);
-  --color-surface-3: #fdf3e8;
+  --color-surface-3: #1a1a78;
   --color-line: var(--color-border);
-  --color-line-soft: #f0e6db;
+  --color-line-soft: #1b1b72;
   --color-muted: var(--color-text-muted);
   --color-faint: var(--color-text-faint);
   --color-blaze: var(--color-accent);
   --color-blaze-soft: var(--color-accent-pressed);
-  --color-blaze-dim: #ffc9b0;
+  --color-blaze-dim: #6b1b4d;
   --color-blaze-ghost: var(--color-accent-tint);
-  --color-steel: #3f6f9e;
-  --color-steel-dim: #cddcea;
-  --color-steel-ghost: #eef4f9;
+  --color-steel: var(--color-brand-cyan);
+  --color-steel-dim: #0a4e6e;
+  --color-steel-ghost: #052b3d;
   --color-good: var(--color-lime);
   --color-good-ghost: var(--color-lime-tint);
-  --color-warn-ghost: #fdf1dc;
-  --color-bad: #c0392b;
-  --color-bad-ghost: #fbeae7;
+  --color-warn-ghost: #3d2c08;
+  --color-bad: #ff6b6b;
+  --color-bad-ghost: #3d1414;
 }
 
 /* ── Base ────────────────────────────────────────────────────────────────── */
 html {
-  color-scheme: light;
+  color-scheme: dark;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -104,7 +125,7 @@ body {
 }
 
 ::selection {
-  background: rgba(255, 107, 53, 0.25);
+  background: rgba(237, 32, 150, 0.4);
 }
 
 /* Digits line up in every table, meter and stat. */
@@ -112,7 +133,8 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Figures — Karla, so they read evenly beside the serif headings. */
+/* Figures. Brando's Arabic cuts carry no tabular Latin, so numerals fall to
+   the approved alternate rather than losing their alignment. */
 .stat-num {
   font-family: var(--font-num);
   font-weight: 700;
@@ -120,19 +142,31 @@ body {
   line-height: 1;
 }
 
-/* Small uppercase Latin label. */
+/* Small uppercase Latin label, set wide — the identity uses this treatment
+   throughout its own documents. */
 .micro {
   font-family: var(--font-num);
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   line-height: 1;
 }
 
+/* The identity's signature device: a soft, blurred multi-colour field. It
+   goes behind headers and hero blocks, never under body text. */
+.brand-glow {
+  background:
+    radial-gradient(42% 56% at 22% 32%, rgba(237, 32, 150, 0.55), transparent 70%),
+    radial-gradient(46% 52% at 62% 28%, rgba(255, 190, 74, 0.45), transparent 70%),
+    radial-gradient(52% 60% at 74% 66%, rgba(23, 211, 255, 0.5), transparent 70%),
+    radial-gradient(60% 70% at 36% 74%, rgba(0, 0, 184, 0.8), transparent 72%);
+  filter: blur(28px);
+}
+
 /* ── Focus — mandatory on every interactive element ──────────────────────── */
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-brand-cyan);
   outline-offset: 2px;
 }
 
@@ -154,9 +188,9 @@ input[type='number']::-webkit-inner-spin-button {
   margin: 0;
 }
 
-/* The native picker icon reads fine on the light ground, so it is left
-   unfiltered; only the pointer is worth setting. */
+/* The native picker icon is invisible on a dark ground otherwise. */
 input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(0.75);
   cursor: pointer;
 }
 
@@ -168,7 +202,7 @@ input[type='date']::-webkit-calendar-picker-indicator {
 /* ── Scrollbars ──────────────────────────────────────────────────────────── */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-border-dashed) transparent;
+  scrollbar-color: var(--color-border) transparent;
 }
 ::-webkit-scrollbar {
   width: 10px;
@@ -178,7 +212,7 @@ input[type='date']::-webkit-calendar-picker-indicator {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border-dashed);
+  background: var(--color-border);
   border-radius: 999px;
   border: 3px solid var(--color-bg);
 }

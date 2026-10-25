@@ -78,7 +78,7 @@ export default function ClientNutritionPage() {
         </h1>
       </header>
 
-      <section className="flex items-center gap-4 rounded-[16px] bg-accent p-5.5 text-accent-ink shadow-[0_2px_6px_rgba(44,24,16,.12)]">
+      <section className="flex items-center gap-4 rounded-[16px] bg-accent p-5.5 text-accent-ink shadow-[0_2px_8px_rgba(0,0,20,.45)]">
         <div className="min-w-0 flex-1">
           <p className="text-[13.5px] font-semibold opacity-90">السعرات المستهدفة</p>
           <p className="font-[family-name:var(--font-display)] text-[50px] leading-[1.05] font-bold">

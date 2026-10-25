@@ -310,7 +310,7 @@ export default function AddClientPage() {
           {step === 1 ? (
             <Link
               href="/trainer"
-              className="flex h-12 items-center rounded-full border border-[rgba(255,255,255,.16)] px-[22px] text-[15px] font-semibold transition-colors hover:bg-[rgba(255,255,255,.07)]"
+              className="flex h-12 items-center rounded-full border border-line px-[22px] text-[15px] font-semibold transition-colors hover:bg-surface-alt"
             >
               السابق
             </Link>
