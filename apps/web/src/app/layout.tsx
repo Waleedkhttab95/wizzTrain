@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
-import { IBM_Plex_Sans_Arabic } from 'next/font/google';
+import { IBM_Plex_Mono, IBM_Plex_Sans_Arabic } from 'next/font/google';
 import type { ReactNode } from 'react';
 import { AuthProvider } from '@/lib/auth';
 import { ToastProvider } from '@/components/ui/Toast';
@@ -36,6 +36,17 @@ const plexArabic = IBM_Plex_Sans_Arabic({
   display: 'swap',
 });
 
+/**
+ * Numbers, prices and the small Latin section labels on the landing page.
+ * Latin only — it never sets Arabic.
+ */
+const plexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['500', '600'],
+  variable: '--font-plex-mono',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
   title: 'WizzTrain — منصة التدريب الشخصي',
   description: 'برنامجك التدريبي وخطتك الغذائية ومتابعة تقدمك اليومي',
@@ -49,7 +60,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="ar" dir="rtl" className={`${brando.variable} ${plexArabic.variable}`}>
+    <html lang="ar" dir="rtl" className={`${brando.variable} ${plexArabic.variable} ${plexMono.variable}`}>
       <body>
         <AuthProvider>
           <ToastProvider>{children}</ToastProvider>

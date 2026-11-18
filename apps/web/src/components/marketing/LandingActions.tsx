@@ -34,16 +34,13 @@ export function AuthLink({
   );
 }
 
-/** Nav pair: a quiet sign-in link beside the primary button. */
+/** Nav pair: a quiet sign-in link beside the amber button, as the design shows. */
 export function NavActions() {
   const { user, loading } = useAuth();
 
   if (!loading && user) {
     return (
-      <Link
-        href={homeFor(user.role)}
-        className={`${styles.btn} ${styles.btnPrimary} ${styles.btnSm}`}
-      >
+      <Link href={homeFor(user.role)} className={`${styles.btn} ${styles.btnAmber}`}>
         افتح لوحتي
       </Link>
     );
@@ -54,7 +51,7 @@ export function NavActions() {
       <Link href="/login" className={styles.navLink}>
         تسجيل دخول
       </Link>
-      <Link href="/login" className={`${styles.btn} ${styles.btnPrimary} ${styles.btnSm}`}>
+      <Link href="/login" className={`${styles.btn} ${styles.btnAmber}`}>
         ابدأ مجانًا
       </Link>
     </>

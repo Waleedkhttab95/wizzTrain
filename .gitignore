@@ -23,3 +23,6 @@ uploads/
 
 # TypeScript incremental build state — machine-local, not source.
 *.tsbuildinfo
+
+# Design handoff archives dropped into the repo root.
+*.zip
