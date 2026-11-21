@@ -123,7 +123,9 @@ const programs = [
   },
 ] as const;
 
-const steps: { n: string; title: string; text: string; amber?: boolean }[] = [
+/* All four cards are white. The design had the fourth in amber, which was
+   invisible once the section itself became amber. */
+const steps = [
   { n: '01', title: 'أنشئ حساب المتدرب', text: 'أضفه من لوحتك ببياناته الأساسية.' },
   { n: '02', title: 'طبّق جدولًا جاهزًا', text: 'اختر قالبًا من برامجك، ثم عدّل نسخته وحدها.' },
   { n: '03', title: 'حدّد أهدافه الغذائية', text: 'سعرات وماكروز وماء وخطوات، يومية وأسبوعية.' },
@@ -131,7 +133,6 @@ const steps: { n: string; title: string; text: string; amber?: boolean }[] = [
     n: '04',
     title: 'هو يبدأ التسجيل',
     text: 'ينزّل التطبيق ويسجّل من أول يوم، وأنت تستلم الأرقام.',
-    amber: true,
   },
 ];
 
@@ -571,22 +572,10 @@ export function Landing() {
           </div>
           <div className={`${styles.grid} ${styles.gridSteps}`}>
             {steps.map((step) => (
-              <div
-                key={step.n}
-                className={`${step.amber ? styles.stepCardAmber : styles.stepCard} ${styles.reveal}`}
-              >
-                <span
-                  className={`${styles.stepNum} ${step.amber ? styles.stepNumNavy : ''}`}
-                >
-                  {step.n}
-                </span>
+              <div key={step.n} className={`${styles.stepCard} ${styles.reveal}`}>
+                <span className={styles.stepNum}>{step.n}</span>
                 <h3 className={styles.stepTitle}>{step.title}</h3>
-                <p
-                  className={styles.cardText}
-                  style={step.amber ? { color: '#3A2A08' } : undefined}
-                >
-                  {step.text}
-                </p>
+                <p className={styles.cardText}>{step.text}</p>
               </div>
             ))}
           </div>

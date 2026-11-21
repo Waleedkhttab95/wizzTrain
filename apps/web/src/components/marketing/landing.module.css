@@ -735,14 +735,6 @@
   gap: 14px;
   border: 1px solid #f6e8cc;
 }
-.stepCardAmber {
-  background: var(--wz-amber);
-  border-radius: 22px;
-  padding: 26px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
 .stepNum {
   font-family: var(--wz-font-mono);
   width: 48px;
@@ -755,10 +747,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-.stepNumNavy {
-  background: var(--wz-navy);
-  color: var(--wz-amber);
 }
 .stepTitle {
   margin: 0;
