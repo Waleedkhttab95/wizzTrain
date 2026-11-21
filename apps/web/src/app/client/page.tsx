@@ -67,7 +67,7 @@ export default function HomePage() {
   if (me.error) return <div className="p-5"><ErrorNote message={me.error.message} onRetry={me.reload} /></div>;
 
   return (
-    <div className="flex flex-col gap-4 px-5 pt-[26px] pb-2">
+    <div className="flex flex-col gap-4 px-5 pt-[26px] pb-2 lg:mx-auto lg:w-full lg:max-w-[1000px] lg:gap-5 lg:px-6 lg:pt-9">
       <header className="flex items-center gap-3">
         <div className="flex-1">
           <p className="text-[13.5px] font-semibold text-text-muted">{longDate(today)}</p>
@@ -124,8 +124,11 @@ export default function HomePage() {
         </Link>
       )}
 
-      {/* Today's session */}
-      {day ? (
+      {/* Below lg this wrapper is just a column with the same gap; from lg up
+          it turns the rest of the screen into a two-column board. */}
+      <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[1.25fr_1fr] lg:items-start lg:gap-5">
+        {/* Today's session */}
+        {day ? (
         <section className="flex flex-col gap-3.5 rounded-[16px] bg-surface p-5 border border-line-soft">
           <div className="flex items-center justify-between gap-2.5">
             <span className="rounded-full bg-accent-tint px-3 py-1.5 text-[12.5px] font-bold text-accent-pressed">
@@ -155,14 +158,15 @@ export default function HomePage() {
             ابدأ التمرين
           </Link>
         </section>
-      ) : (
-        <section className="rounded-[16px] bg-surface p-5">
-          <p className="text-[14px] leading-relaxed text-text-muted">
-            مدربك لسه ما جهّز برنامجك. بيوصلك هنا أول ما يخلص.
-          </p>
-        </section>
-      )}
+        ) : (
+          <section className="rounded-[16px] bg-surface p-5">
+            <p className="text-[14px] leading-relaxed text-text-muted">
+              مدربك لسه ما جهّز برنامجك. بيوصلك هنا أول ما يخلص.
+            </p>
+          </section>
+        )}
 
+        <div className="flex flex-col gap-4 lg:gap-5">
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-[16px] bg-surface p-4.5">
           <p className="text-[13px] font-semibold text-text-muted">آخر وزن</p>
@@ -205,6 +209,8 @@ export default function HomePage() {
           </p>
         </div>
       )}
+        </div>
+      </div>
     </div>
   );
 }

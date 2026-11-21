@@ -128,7 +128,9 @@ export default function LogWizardPage() {
   const value = values[spec.key] ?? 0;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    // The wizard asks one number at a time; widening it would only push the
+    // question and its control apart.
+    <div className="flex min-h-0 flex-1 flex-col lg:mx-auto lg:w-full lg:max-w-[520px]">
       <header className="flex flex-col gap-3.5 px-5 pt-5.5 pb-2.5">
         <div className="flex items-center gap-3">
           <button

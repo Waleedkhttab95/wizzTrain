@@ -26,3 +26,6 @@ uploads/
 
 # Design handoff archives dropped into the repo root.
 *.zip
+
+# Local test-account credentials. Never committed.
+TEST-ACCOUNTS.local.md

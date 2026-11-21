@@ -74,7 +74,7 @@ export default function WorkoutPage() {
   const pct = day.exercises.length === 0 ? 0 : (done / day.exercises.length) * 100;
 
   return (
-    <div className="flex flex-col gap-3.5 px-5 pt-[26px] pb-2">
+    <div className="flex flex-col gap-3.5 px-5 pt-[26px] pb-2 lg:mx-auto lg:w-full lg:max-w-[980px] lg:px-6 lg:pt-9">
       <header>
         <p className="text-[13.5px] font-semibold text-text-muted">تمرين اليوم</p>
         <h1 className="font-[family-name:var(--font-display)] text-[30px] leading-[1.2] font-bold">
@@ -126,14 +126,17 @@ export default function WorkoutPage() {
       {day.exercises.length === 0 ? (
         <EmptyState title="ما فيه تمارين بهذا اليوم" body="اختر يومًا آخر أو كلّم مدربك." />
       ) : (
-        day.exercises.map((exercise, index) => (
-          <WorkoutExercise
-            key={exercise.id}
-            index={index + 1}
-            exercise={exercise}
-            onLogged={onLogged}
-          />
-        ))
+        // One per row on a phone; two abreast once there is width for them.
+        <div className="flex flex-col gap-3.5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-4">
+          {day.exercises.map((exercise, index) => (
+            <WorkoutExercise
+              key={exercise.id}
+              index={index + 1}
+              exercise={exercise}
+              onLogged={onLogged}
+            />
+          ))}
+        </div>
       )}
     </div>
   );

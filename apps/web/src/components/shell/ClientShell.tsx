@@ -13,20 +13,55 @@ const TABS = [
   { href: '/client/log', label: 'تسجيلي', d: 'M12 5v14M5 12h14' },
 ];
 
+function TabIcon({ d }: { d: string }) {
+  return (
+    <svg
+      width="21"
+      height="21"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d={d} />
+    </svg>
+  );
+}
+
 /**
- * The client app is a phone app: a 430px column centred on whatever screen it
- * lands on, with a fixed bottom tab bar.
+ * The client app has two shapes.
  *
- * The column reserves the tab bar's height once, here. Inner screens must use
- * `flex-1 min-h-0` rather than their own `calc(100vh - 92px)`, or a centred CTA
- * ends up underneath the nav.
+ * Up to `lg` it is a phone app: a 430px column centred on whatever screen it
+ * lands on, with a fixed bottom tab bar. That is how nearly every trainee
+ * opens it, standing in the gym.
+ *
+ * From `lg` up it becomes a desktop layout: a wider container with the tabs
+ * moved to a top bar, no bottom bar, and no phone frame. Screens opt into
+ * wider arrangements with their own `lg:` classes; nothing is hidden or
+ * added, so both shapes show the same content.
+ *
+ * The narrow column reserves the bottom bar's height once, here. Inner
+ * screens must use `flex-1 min-h-0` rather than their own `calc(100vh-92px)`,
+ * or a centred action ends up underneath the nav.
  */
 export function ClientShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  // `/client` must not light up for every nested route.
+  const isActive = (href: string) => pathname === href;
 
   return (
-    <div className="flex min-h-dvh justify-center bg-surface-alt">
-      <div className="relative flex min-h-dvh w-full max-w-[430px] flex-col overflow-hidden bg-bg shadow-[0_12px_32px_rgba(0,0,20,.6)]">
+    <div className="flex min-h-dvh justify-center bg-surface-alt lg:bg-bg">
+      <div
+        className={cn(
+          'relative flex min-h-dvh w-full flex-col overflow-hidden bg-bg',
+          'max-w-[430px] shadow-[0_12px_32px_rgba(0,0,20,.6)]',
+          // Desktop: drop the phone frame and let the column breathe.
+          'lg:max-w-[1100px] lg:shadow-none',
+        )}
+      >
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -top-[120px] size-[320px] rounded-full blur-[34px]"
@@ -39,12 +74,44 @@ export function ClientShell({ children }: { children: ReactNode }) {
           }}
         />
 
-        <div className="relative z-1 flex flex-1 flex-col pb-[92px]">{children}</div>
+        {/* Desktop top bar. Hidden on phones, where the bottom bar leads. */}
+        <header className="relative z-5 hidden border-b border-line bg-surface/80 backdrop-blur-sm lg:block">
+          <nav
+            aria-label="أقسام التطبيق"
+            className="mx-auto flex max-w-[1000px] items-center gap-1 px-6 py-2.5"
+          >
+            {TABS.map((tab) => {
+              const active = isActive(tab.href);
+              return (
+                <Link
+                  key={tab.href}
+                  href={tab.href}
+                  aria-current={active ? 'page' : undefined}
+                  className={cn(
+                    'flex min-h-11 items-center gap-2.5 rounded-full px-4 py-2',
+                    'text-[14.5px] font-semibold transition-colors',
+                    active
+                      ? 'bg-accent-tint text-accent-pressed'
+                      : 'text-text-muted hover:text-text',
+                  )}
+                >
+                  <TabIcon d={tab.d} />
+                  {tab.label}
+                </Link>
+              );
+            })}
+          </nav>
+        </header>
 
-        <nav className="fixed bottom-0 z-5 flex w-full max-w-[430px] gap-1.5 border-t border-line bg-surface px-3 pt-2.5 pb-3.5 shadow-[0_-6px_22px_rgba(0,0,20,.5)]">
+        <div className="relative z-1 flex flex-1 flex-col pb-[92px] lg:pb-10">{children}</div>
+
+        {/* Phone bottom bar. The width cap matches the column above it. */}
+        <nav
+          aria-label="أقسام التطبيق"
+          className="fixed bottom-0 z-5 flex w-full max-w-[430px] gap-1.5 border-t border-line bg-surface px-3 pt-2.5 pb-3.5 shadow-[0_-6px_22px_rgba(0,0,20,.5)] lg:hidden"
+        >
           {TABS.map((tab) => {
-            // `/client` must not light up for every nested route.
-            const active = pathname === tab.href;
+            const active = isActive(tab.href);
             return (
               <Link
                 key={tab.href}
@@ -62,19 +129,7 @@ export function ClientShell({ children }: { children: ReactNode }) {
                     active ? 'bg-accent-tint' : 'bg-transparent',
                   )}
                 >
-                  <svg
-                    width="21"
-                    height="21"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.75"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d={tab.d} />
-                  </svg>
+                  <TabIcon d={tab.d} />
                 </span>
                 {tab.label}
               </Link>

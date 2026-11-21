@@ -70,7 +70,7 @@ export default function ClientNutritionPage() {
   ].filter((bar) => bar.goal !== null);
 
   return (
-    <div className="flex flex-col gap-3.5 px-5 pt-[26px] pb-2">
+    <div className="flex flex-col gap-3.5 px-5 pt-[26px] pb-2 lg:mx-auto lg:w-full lg:max-w-[980px] lg:px-6 lg:pt-9">
       <header>
         <p className="text-[13.5px] font-semibold text-text-muted">خطة التغذية</p>
         <h1 className="font-[family-name:var(--font-display)] text-[30px] leading-[1.2] font-bold">
@@ -167,6 +167,7 @@ export default function ClientNutritionPage() {
           <h2 className="font-[family-name:var(--font-display)] text-[22px] font-bold text-lime-ink-strong">
             وجبات مقترحة
           </h2>
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start">
           {p.meals.map((meal) => (
             <div key={meal.id} className="flex flex-col gap-1 rounded-[14px] bg-surface px-4 py-3.5">
               <p className="text-[15px] font-bold">{meal.name}</p>
@@ -175,6 +176,7 @@ export default function ClientNutritionPage() {
               </p>
             </div>
           ))}
+          </div>
         </section>
       )}
     </div>
