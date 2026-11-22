@@ -16,7 +16,7 @@ import { computeStreak, logFor } from '@/lib/streak';
 import { useApi } from '@/lib/useApi';
 import { suggestedDay } from '@/lib/workoutDay';
 import { palette } from '@/lib/palette';
-import { ChangePasswordDialog } from '@/components/ui/ChangePasswordDialog';
+import { AccountMenu } from '@/components/client/AccountMenu';
 
 export default function HomePage() {
   const today = todayIso();
@@ -58,8 +58,6 @@ export default function HomePage() {
     .filter((log) => log.weightKg !== null)
     .sort((a, b) => b.logDate.localeCompare(a.logDate));
   const latestWeight = weighIns[0]?.weightKg ?? null;
-  const [passwordOpen, setPasswordOpen] = useState(false);
-
   const weightDelta =
     weighIns.length >= 2 ? (weighIns[0].weightKg as number) - (weighIns[1].weightKg as number) : null;
 
@@ -75,18 +73,10 @@ export default function HomePage() {
             {greeting()} {firstName(me.data?.name ?? '')}
           </h1>
         </div>
-        <button
-          type="button"
-          onClick={() => setPasswordOpen(true)}
-          title="تغيير كلمة المرور"
-          aria-label="تغيير كلمة المرور"
-          className="grid size-[46px] flex-none place-items-center rounded-full bg-lime text-[15px] font-bold text-bg transition-opacity hover:opacity-85"
-        >
-          {initials(me.data?.name ?? '')}
-        </button>
+        {/* From lg up the same control sits in the shell's top bar instead,
+            where every tab can reach it. */}
+        <AccountMenu className="lg:hidden" />
       </header>
-
-      <ChangePasswordDialog open={passwordOpen} onClose={() => setPasswordOpen(false)} />
 
       {/* The day's single most important action. */}
       {streak.loggedToday ? (

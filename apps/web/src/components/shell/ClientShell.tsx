@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
+import { AccountMenu } from '@/components/client/AccountMenu';
 import { cn } from '@/components/ui/cn';
 
 /** Lucide paths at the handoff's stroke-width 2.75. */
@@ -100,6 +101,7 @@ export function ClientShell({ children }: { children: ReactNode }) {
                 </Link>
               );
             })}
+            <AccountMenu className="ms-auto" />
           </nav>
         </header>
 
