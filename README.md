@@ -1,13 +1,13 @@
 # منصة إدارة التدريب الشخصي — Personal Training Management Platform
 
-MVP v0 backend, implementing [`TECH_SPEC_EN.md`](TECH_SPEC_EN.md).
+MVP v0, implementing [`TECH_SPEC_EN.md`](TECH_SPEC_EN.md).
 
 A single personal trainer manages their clients: builds a workout program and a
 nutrition plan for each one, and reviews their daily and weekly adherence from
 one place — replacing an Excel + WhatsApp + PDF workflow.
 
 **Status:** both apps are built and verified — the NestJS API and the Next.js
-web app (Trainer + Client, Arabic RTL).
+web app (landing page + Trainer + Client, Arabic RTL).
 
 ---
 
@@ -47,10 +47,12 @@ apps/
         client/         program, nutrition, daily log, progress
       components/
         ui/             Button, Card, Field, Meter, Stat, Modal, Toast, Tabs
-        shell/          role-aware nav: side rail on desktop, tab bar on phones
+        shell/          role-aware nav: side rail for the trainer; the client app
+                        is a phone column with a bottom bar, and widens to a
+                        top-bar layout from 1024px up
         trainer/        the trainer-only screens
         client/         the exercise card with inline logging
-        charts/         hand-drawn SVG weight trend
+        marketing/      the public landing page at /
       lib/              api client, auth context, formatters
 packages/
   shared/               TypeScript contracts shared by api and web
@@ -67,24 +69,26 @@ and stops the modules forming a dependency cycle.
 
 ## Getting started
 
+Everything below assumes **Node 20+** and a **PostgreSQL 14 or newer**. From a
+fresh clone it is five commands and about two minutes.
+
 ### 1. Environment
 
 ```bash
 cp .env.example .env
 ```
 
-Then edit `.env`. Two values must be set before anything will boot:
+Three values need your attention before anything boots:
 
-```bash
-openssl rand -base64 48   # paste into JWT_SECRET (minimum 32 characters)
-```
+| Variable | What to put there |
+|---|---|
+| `JWT_SECRET` | 32 characters or more — `openssl rand -base64 48` |
+| `SEED_TRAINER_PASSWORD` | the password you will sign in with |
+| `SEED_DEMO_PASSWORD` | the password the demo clients share |
 
-- `SEED_TRAINER_PASSWORD` — the seed refuses to run without it, so the pilot
-  trainer never ends up with a default password.
-- `DATABASE_URL` — must match the `POSTGRES_*` values if you use Compose.
-
-Every variable is validated by Joi at startup: a missing or malformed value
-fails the boot with a clear message instead of surfacing on a later request.
+`DATABASE_URL` works as shipped if you use the bundled Postgres. Every variable
+is validated at start-up, so a missing or malformed one fails the boot with a
+clear message rather than surfacing on some later request.
 
 ### 2. Database
 
@@ -94,49 +98,76 @@ With Docker:
 docker compose up -d postgres
 ```
 
-Or point `DATABASE_URL` at any PostgreSQL you already run.
+Or point `DATABASE_URL` at a PostgreSQL you already run. The database named in
+the URL must exist; the migration creates the tables, not the database.
 
 ### 3. Install, migrate, seed
 
 ```bash
 npm install
-npm run build --workspace @wizzapp/shared
+npm run build --workspace @wizzapp/shared   # the API and web both compile against it
 npm run prisma:migrate
 npm run seed
 ```
 
 ### 4. Run
 
-Two processes, in two terminals:
+Two processes, two terminals:
 
 ```bash
-npm run dev:api
+npm run dev:api     # http://localhost:4000/api/v1
 ```
 
 ```bash
-npm run dev:web
+npm run dev:web     # http://localhost:3000
 ```
 
-- **Web app** — http://localhost:3000
-- **API** — http://localhost:4000/api/v1
+Open **http://localhost:3000**. That is the public landing page; the sign-in
+link is in its header.
 
-Sign in with the `SEED_TRAINER_EMAIL` / `SEED_TRAINER_PASSWORD` from your `.env`.
-The API routes you to the trainer or client section based on the role in the JWT.
-
-If port 3000 is taken, run the web app elsewhere and add that origin to
-`CORS_ORIGINS` — the API rejects any origin it wasn't told about:
+If port 3000 is taken, move the web app and tell the API about the new origin —
+it rejects any origin it was not given:
 
 ```bash
-WEB_PORT=3001 npm run dev:web
+WEB_PORT=3001 npm run dev:web     # then add http://localhost:3001 to CORS_ORIGINS
 ```
 
-Check the API on its own:
+---
 
-```bash
-curl http://localhost:4000/api/v1/health
-```
+## Seed data
 
-### Interactive API docs
+`npm run seed` always creates the single pilot trainer. With `SEED_DEMO=true`
+in your `.env` — which `.env.example` ships with — it also creates a worked
+example, so no screen opens empty:
+
+| | |
+|---|---|
+| **A workout template** | «تقسيم دفع/سحب/أرجل», three days, four exercises each |
+| **Three clients** | each with a program copied from that template, a nutrition plan with four meals, and three weeks of daily logs |
+| **Exercise logs** | on the most recent training days, so the weekly summary has an adherence rate to report |
+
+The three clients deliberately sit in the three different adherence states the
+roster colours by, so the dashboard is not a wall of one status:
+
+| Client | Email | State |
+|---|---|---|
+| ريم القحطاني | `reem@wizzapp.local` | منتظم — logs almost every day |
+| فهد الحربي | `fahad@wizzapp.local` | متقطع — about half the week |
+| نور إبراهيم | `nour@wizzapp.local` | متأخر — stopped two weeks ago |
+
+**Signing in.** The trainer uses `SEED_TRAINER_EMAIL` / `SEED_TRAINER_PASSWORD`.
+All three clients use their email above with `SEED_DEMO_PASSWORD`. The API
+routes you to the trainer console or the client app based on the role in the
+JWT — same login screen for both.
+
+The seed is idempotent. Re-running it updates the trainer and rebuilds each
+demo client from scratch rather than stacking a second program onto the same
+person, so it is safe to run whenever you want the data back to a known state.
+
+**Leave `SEED_DEMO` unset anywhere real data lives.** The demo half deletes and
+recreates any client holding one of those three emails.
+
+## Interactive API docs
 
 | | |
 |---|---|
@@ -144,8 +175,9 @@ curl http://localhost:4000/api/v1/health
 | **OpenAPI JSON** | http://localhost:4000/api/docs/json |
 
 To try a request: call `POST /auth/login` with your `SEED_TRAINER_EMAIL` /
-`SEED_TRAINER_PASSWORD`, copy `accessToken`, click **Authorize**, paste it. The
-token persists across page reloads.
+`SEED_TRAINER_PASSWORD` (or a demo client's email and `SEED_DEMO_PASSWORD` to
+see the client-side routes), copy `accessToken`, click **Authorize**, paste it.
+The token persists across page reloads.
 
 Schemas are generated from the DTOs by the `@nestjs/swagger` CLI plugin, so
 validation rules (min/max, patterns, required fields) and doc comments appear in
@@ -285,20 +317,20 @@ password, so response timing does not reveal which emails are registered.
 ## Testing
 
 ```bash
-npm test                      # 67 unit tests, no database needed
-npm run test:e2e              # 35 e2e tests, needs a running migrated database
+npm test                      # 286 unit tests (106 API + 180 web), no database needed
+npm run test:e2e              # 50 e2e tests, needs a running migrated database
 npm run lint
 ```
 
 The e2e suite boots the real application with the same pipes, guards and filters
 as production, walks the three end-to-end flows in spec §7.3 and the full role
-matrix, then deletes everything it created. Run it against a scratch database:
+matrix, then deletes everything it created. It raises the login rate limit for
+itself in `test/e2e-env.ts`, because it signs in far more than five times a
+minute. Run it against a scratch database:
 
 ```bash
-DATABASE_URL=postgresql://…/wizzapp_test LOGIN_RATE_LIMIT=500 npm run test:e2e
+DATABASE_URL=postgresql://…/wizzapp_test npm run test:e2e
 ```
-
-`LOGIN_RATE_LIMIT` needs raising because the suite logs in more than five times.
 
 ---
 
@@ -318,10 +350,23 @@ mirroring is structural rather than a stack of overrides.
 | Nutrition plan editor | Weekly progress |
 | Weekly summary · daily-log history | |
 
-**Design.** Near-black ground, one heat accent (`--color-blaze`) spent only on
-the primary action and live state, steel blue for data. Cairo carries the Arabic;
-Barlow Condensed sets the numerals, so weights and macros read like a scoreboard.
-Committed single dark theme — it is a gym app.
+**Design.** The Let's Ops identity. The signed-in app runs on Midnight Navy
+with Ice Tint type, Vibrant Magenta on the primary action, Cyber Cyan for
+success and Amber Gold for warnings — Electric Blue stays a ground and a
+gradient stop, because it measures 1.5:1 against the navy and cannot be read as
+a foreground. Brando Arabic is self-hosted from the brand files with IBM Plex
+Sans Arabic behind it; numerals come from Plex, which carries the tabular Latin
+figures Brando's Arabic cuts do not.
+
+The public landing page at `/` is the one exception: it runs the light half of
+the same identity — white ground, navy ink, magenta and amber — following
+`wizztrain-redesign/HANDOFF.md`. Every colour pair in both halves was checked
+for colour-blind separation before it shipped.
+
+All tokens live in `apps/web/src/app/globals.css`. The handful of places that
+cannot read a CSS variable — SVG `stroke` and `fill` attributes — take their
+values from `apps/web/src/lib/palette.ts`, which mirrors that stylesheet and
+has to be edited alongside it.
 
 **Two behaviours worth knowing before you change them:**
 
@@ -371,13 +416,16 @@ it** — the command is in the script's comments.
 
 ## Not built yet
 
-- **Password change / reset** — a password is hashed once when the trainer
-  creates the client and there is no route to change it. A client who loses
-  theirs is locked out. Worth adding before the pilot.
-- **Client archiving** — no `DELETE /clients/:id` and no active flag, so the
-  roster only grows.
+- **Deployment and CI** — `docker compose up` works locally, but nothing runs
+  the tests on push and the platform has no host yet.
 - Everything listed as out of scope in spec §1: WhatsApp, payments, multi-tenant,
   progress photos, push notifications, wearables
+
+### Before a pilot
+
+- Change `SEED_TRAINER_PASSWORD`. The value in `.env.example` is a placeholder
+  and the one in a developer's `.env` is not a secret.
+- Unset `SEED_DEMO` and remove the three demo clients.
 
 ## Deviations from the spec
 
